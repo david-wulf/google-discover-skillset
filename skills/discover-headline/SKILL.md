@@ -9,9 +9,12 @@ description: >
   Verwende diesen Skill immer, wenn es um Überschriften, Titel oder deren Klickwirkung geht —
   auch bei: "Headline prüfen", "Titel bewerten", "og:title optimieren", "pCTR", "CTR-Prognose
   Headline", "Headline-Varianten", "Überschrift testen", "welcher Titel ist besser",
-  "Titel A/B vergleichen", "ist das Clickbait", "Titel zu lang", "Überschrift für Discover".
-  Auch auslösen, wenn nur eine Liste von Titeln zur Bewertung eingereicht wird, oder wenn ein
-  Artikel vorliegt und Titelvorschläge gewünscht sind.
+  "Titel A/B vergleichen", "ist das Clickbait", "Titel zu lang", "Überschrift für Discover",
+  "was wäre eine gute Überschrift für", "Titel vorschlagen", "Headline schreiben",
+  "wie soll ich den Artikel nennen".
+  Auch auslösen, wenn nur eine Liste von Titeln zur Bewertung eingereicht wird, wenn ein
+  Artikel vorliegt und Titelvorschläge gewünscht sind, oder wenn nur ein Thema genannt wird und
+  Titelideen dafür gesucht werden.
   Für den Artikeltext ist discover-content-optimizer zuständig, für Titelbild und Feed-Karte
   discover-feedkarte.
 ---
@@ -51,9 +54,38 @@ nachgebauten, offen dokumentierten Modell und vergleicht Varianten gegeneinander
 | **Kernentität** | Für die Positionsprüfung. Aus dem Thema ableiten und die Annahme benennen. |
 | **Artikeltext** | Optional, aber entscheidend für den `clickbait_score`: nur mit Text ist prüfbar, ob der Titel einlöst. Ohne Text wird der Wert als geschätzt markiert. |
 
-Wenn nur ein Titel vorliegt und Varianten gewünscht sind: Original zuerst bewerten, dann vier
-Varianten mit **je unterschiedlicher Formel** aus `references/formeln.md` erzeugen und alle fünf
-gemeinsam durchrechnen.
+Drei Ausgangslagen, drei Wege:
+
+**A — Titel vorhanden, Bewertung gewünscht.** Direkt zu Schritt 1.
+
+**B — Ein Titel vorhanden, Varianten gewünscht.** Original zuerst bewerten, dann vier Varianten
+mit **je unterschiedlicher Formel** aus `references/formeln.md` erzeugen und alle fünf gemeinsam
+durchrechnen.
+
+**C — Nur ein Thema, noch kein Titel** („Was wäre eine gute Discover-Überschrift für X?").
+Hier gilt eine harte Regel: **Ein guter Discover-Titel trägt einen Fakt, und ein Fakt wird nicht
+erfunden.** Eine Zahl in die Headline zu schreiben, die niemand geprüft hat, ist genau der
+Vorschauinhalt mit vorgetäuschten Details, den die Richtlinien untersagen. Deshalb in dieser
+Reihenfolge:
+
+1. **Liegt ein Artikeltext vor?** Dann daraus den stärksten Fakt ziehen (überraschendste Zahl,
+   größter Kontrast, konkretestes Ergebnis) und damit arbeiten. Das ist der Normalfall und der
+   beste.
+2. **Kein Text, aber Recherchezugang?** Wenn SERP-, Trends- oder GSC-Werkzeuge im Kontext
+   verfügbar sind: Kernentitäten und aktuellen Anlass ermitteln, dann Titel darauf bauen. Die
+   genutzte Quelle im Bericht benennen.
+3. **Nur das Thema, keine Recherche möglich?** Dann fünf Titel-**Gerüste** liefern, in denen jeder
+   ungeprüfte Fakt als Platzhalter steht — `{{ERTRAG_KWH}}`, `{{ERSPARNIS_EURO}}`,
+   `{{INSTITUTION}}`. Dazu je Gerüst: welche Formel, welcher Fakt gebraucht wird und wo er zu
+   holen ist. Bewertet wird dann **nicht** mit pCTR-Werten, sondern es wird gesagt, welchen Score
+   das Gerüst erreichen kann, sobald die Platzhalter gefüllt sind — mit dem Hinweis, dass die
+   Bewertung erst nach dem Füllen gilt.
+
+Nie Platzhalter stillschweigend mit plausiblen Zahlen füllen und dann einen pCTR-Wert dafür
+ausgeben. Das ist der eine Fehler, der diesen Skill von einem Textgenerator unterscheiden muss.
+
+Wenn der Nutzer eine Zahl selbst liefert („der Ertrag liegt bei 900 kWh"), gilt sie als gedeckt
+und wird eingesetzt — die Quelle ist dann der Nutzer, und das steht im Bericht.
 
 ### Schritt 1 — Merkmale messen
 
