@@ -204,11 +204,18 @@ ungefragt erzeugen.
 | Skill | Zuständig für |
 |-------|---------------|
 | **discover-feedkarte** | Titelbild und Feed-Karte: Bild, Beschnitt, Lesbarkeit, Bild-Headline-Zusammenspiel |
+| discover-headline | den `og:title` selbst: acht gewichtete Dimensionen, Clickbait-Abzug, Variantenvergleich |
 | discover-content-optimizer | Artikeltext: Entitäten, semantische Tiefe, Schema, Keywords |
 | discover-artikel-optimierer | veröffentlichte Seite: OG-Vollständigkeit, News-Sitemap, Startseiten-Prominenz, E-E-A-T-Signale im HTML |
 
 Überschneidung ist gewollt bei `max-image-preview:large` und der Bildbreite — beide Skills
 prüfen das, weil beide es brauchen. Die Bildwirkung prüft nur dieser Skill.
+
+**K4 bewertet den Bildschriftzug gegen den `og:title`, nicht den Titel selbst.** Ist
+`discover-headline` verfügbar und soll auch der Titel bewertet werden, dort laufen lassen und den
+empfohlenen Titel hierher übergeben — dann läuft die Doppelungsprüfung gegen den **neuen** Titel.
+Umgekehrt liefert dieser Skill an `discover-headline` die Information, welche Aussage das Bild
+schon trägt: der Titel soll eine andere tragen.
 
 ## Herkunft der Kriterien
 

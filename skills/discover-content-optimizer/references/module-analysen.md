@@ -127,6 +127,19 @@ zwingend in den Text — bei einem Kaufberater schon. Prüfe die Textsorte, bevo
 
 ## Modul 2 — Content-Optimierung
 
+### 2.0 Wenn der Skill `discover-headline` verfügbar ist
+
+Dann übernimmt dieser die Headline-Arbeit: acht gewichtete Dimensionen, Clickbait-Abzug (β) und
+Variantenvergleich mit pCTR-Delta in Prozentpunkten. Sein Ergebnis wird hier übernommen statt die
+Headline doppelt zu beurteilen — 2.1 und 2.2 entfallen dann, und in D2 der Score-Rubrik wird der
+dortige Rubrik-Score verwendet, die pCTR-Werte als zusätzliche Spalte geführt.
+
+Übergib dabei den in 2.3 ermittelten **stärksten Fakt** des Artikels als Rohmaterial. Ein Titel
+kann keinen Fakt tragen, den der Text nicht hat — wenn der Text keinen hergibt, ist das der
+Befund, nicht die Titelwahl.
+
+Ist der Skill nicht verfügbar, gelten 2.1 und 2.2 unverändert.
+
 ### 2.1 Original-Headline bewerten
 
 **Zuerst**, vor allen Alternativen. Rubrik in `references/scoring.md`, Abschnitt

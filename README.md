@@ -1,15 +1,19 @@
 # Discover Content Optimizer
 
-Claude-Code-Plugin mit zwei Skills für **Google Discover** und **AI-Sichtbarkeit**. Zusammen
-decken sie die beiden Hebel ab, die im Feed über den Klick entscheiden: den Text und die Karte.
+Claude-Code-Plugin mit drei Skills für **Google Discover** und **AI-Sichtbarkeit**. Zusammen
+decken sie die drei Hebel ab, die im Feed über den Klick entscheiden: **Inhalt, Headline, Titelbild**.
 
 | Skill | Prüft | Ergebnis |
 |-------|-------|----------|
 | **discover-content-optimizer** | den **Artikeltext**: kann Google ihn einem Thema, einer Entität und einem Nutzerinteresse zweifelsfrei zuordnen? | Discover Content Score 0–100, Maßnahmenplan, fertige Textbausteine, JSON-LD |
+| **discover-headline** | den **`og:title`**: acht gewichtete Qualitätsdimensionen, Clickbait-Abzug, Variantenvergleich | pCTR pro Variante, Delta zur Baseline in Prozentpunkten, ausgeschriebene Empfehlung |
 | **discover-feedkarte** | die **Feed-Karte**: Titelbild und Headline als Einheit, gerendert auf echte Kartengröße | Feed-Karten-Score 0–100, Tabelle „was in welcher Größe verschwindet", Bildaufträge |
 
-Beide arbeiten mit dokumentierter Rubrik, Punkten pro Unterkriterium und Belegpflicht: jeder
-Befund zitiert die Textstelle oder benennt, was in welcher Bildansicht sichtbar ist.
+Alle drei arbeiten mit dokumentierter Rubrik, Punkten pro Unterkriterium und Belegpflicht: jeder
+Befund zitiert die Textstelle oder benennt, was in welcher Bildansicht sichtbar ist. Sie greifen
+an definierten Stellen ineinander — der Content-Skill liefert den stärksten Fakt für die
+Titelarbeit, der Headline-Skill den `og:title`, gegen den der Karten-Skill prüft, ob der
+Bildschriftzug ihn doppelt — sind aber jeweils allein funktionsfähig.
 
 ## Installation
 
@@ -26,6 +30,7 @@ Alternativ ohne Git: die Ordner unter `skills/` nach `~/.claude/skills/` kopiere
 | Skill | Braucht |
 |-------|---------|
 | discover-content-optimizer | Python 3.8+ (nur Standardbibliothek). Fehlt Python, werden Struktur- und Integrationswerte geschätzt statt berechnet — der Bericht weist das aus |
+| discover-headline | Python 3.8+ (nur Standardbibliothek) |
 | discover-feedkarte | Python 3.8+ **und Pillow** (`pip install pillow`). Ohne Pillow entfällt der Kartengrößen-Test; der Score wird entsprechend gedeckelt statt geschätzt |
 
 ## Nutzung
@@ -42,6 +47,15 @@ fragt nach dem Domain-Profil, wenn es nicht aus dem Text hervorgeht: Technologie
 Finanzen · Bildung · E-Commerce · News · Flash News · Allgemein. Das Profil steuert, welche
 Entitäten erwartet und welche Vertrauenssignale gewichtet werden.
 
+**Headline prüfen:**
+
+```
+Bewerte diese Headline für Discover und schlag Varianten vor:
+<Titel>
+```
+
+Bis zu fünf Titel auf einmal, einer pro Zeile — der erste gilt als Baseline.
+
 **Feed-Karte prüfen:**
 
 ```
@@ -51,7 +65,7 @@ Prüf das Titelbild dieser URL für Discover: <url>
 Ebenfalls möglich: Bilddatei plus Headline, oder ein Screenshot einer Discover-Karte — dann
 braucht es keinen Seitenzugriff und keine Paywall-Umgehung.
 
-In beiden Fällen wird am Ende gefragt, ob zusätzlich ein Word-Bericht, eine Excel-Maßnahmenliste
+In allen Fällen wird am Ende gefragt, ob zusätzlich ein Word-Bericht, eine Excel-Maßnahmenliste
 oder ein HTML-Einseiter erzeugt werden soll. Ohne Auswahl bleibt es beim Bericht im Chat.
 
 ## Skill 1: discover-content-optimizer — was analysiert wird
@@ -81,7 +95,34 @@ ohne benannte Quelle und ohne Faktendichte bei 55.
 Die vollständige Rubrik steht in `skills/discover-content-optimizer/references/scoring.md`
 und wird im Bericht mit Punkten pro Unterkriterium offengelegt.
 
-## Skill 2: discover-feedkarte — das Bild dort prüfen, wo es wirkt
+## Skill 2: discover-headline — der `og:title` mit pCTR-Modell
+
+Der Titel ist das wichtigste Einzelelement in Discover und laut SDK-Befunden **direkter Input in
+Googles pCTR-Modell**, nicht bloß ein Anzeigetext. Der Skill misst zuerst die Titelmerkmale, dann
+werden acht Dimensionen nach dokumentierten Ankern bewertet und in einen Prozentwert umgerechnet:
+
+```
+quality = Σ(wᵢ × fᵢ)            entity_density 22 % · topic_clarity 18 %
+β       = 1 − 0,35 × (cb / 10)  informational_value 16 % · freshness_signal 12 %
+raw     = quality × β           engagement_depth 10 % · title_formatting 8 %
+pCTR    = 0,5 % + 21,5 % × σ(0,65 × (raw − 5,5))    natural_authority 8 % · visual_promise 6 %
+```
+
+Formel, Gewichte und Bandgrenzen sind aus dem [pCTR Predictor](https://pctr-discover.pages.dev/)
+von metehan.ai übernommen, damit die Werte vergleichbar bleiben. Zwei Kalibrierungsschwächen des
+Modells sind dokumentiert und werden im Bericht benannt:
+
+- **Der Mittelpunkt liegt zu hoch.** raw = 5,5 ergibt 11,3 % — der beobachtete CTR-Durchschnitt
+  von News-Seiten. Ein mittelmäßiger Titel bekommt dadurch das Band „hoch". Entscheidungsgrundlage
+  ist deshalb das **Delta zwischen den Varianten**, nicht der Absolutwert.
+- **Der Clickbait-Abzug ist zu schwach.** β kappt maximal 35 %; ein maximal manipulativer Titel
+  mit sonst hohen Werten erreicht noch 14,6 % und das Band „top". Deshalb gilt außerhalb der Formel
+  ein **Veto ab `clickbait_score` 6** — die Variante wird nicht empfohlen, und das wird ausgewiesen.
+
+Die Bewertungsanker der acht Dimensionen veröffentlicht das Original nicht; sie sind in
+`references/dimensionen.md` ergänzt, weil die Bewertung ohne sie nicht reproduzierbar wäre.
+
+## Skill 3: discover-feedkarte — das Bild dort prüfen, wo es wirkt
 
 Im Feed konkurriert kein Artikel, sondern eine Karte von rund 340 × 190 Punkten, wahrgenommen im
 Scrollen. Ein Titelbild, das in Originalgröße überzeugt, kann dort vollständig versagen. Der Skill
@@ -163,6 +204,11 @@ skills/discover-content-optimizer/
   references/domains.md             8 Domain-Profile
   references/discover-mechanik.md   Begründungsbasis, Headline-Formeln
   assets/report-template.html       HTML-Einseiter
+skills/discover-headline/
+  SKILL.md                          Ablauf, Zusammenspiel mit den anderen Skills
+  scripts/pctr.py                   Merkmale messen + pCTR rechnen (stdlib-only)
+  references/dimensionen.md         Anker fuer die acht Dimensionen, Modell, Kalibrierung
+  references/formeln.md             Headline-Formeln, Clickbait-Grenze, og:title-Technik
 skills/discover-feedkarte/
   SKILL.md                          Ablauf, drei Eingabewege, Bewertung an den Ansichten
   scripts/feedcard.py               Mess- und Render-Backend (braucht Pillow)

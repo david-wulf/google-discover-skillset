@@ -67,8 +67,14 @@ des Textes suchen und in die passende Formel einbauen. Jede Variante nutzt eine 
 1. Der stärkste Fakt gehört in die Headline, nicht in Absatz 4.
 2. Neugier-Lücke: Der Leser weiß, worum es geht, aber nicht die Antwort. Weder Rätsel noch Spoiler.
 3. Konkret schlägt abstrakt. „389 Euro im Jahr" schlägt „viel Geld".
-4. Unter 65 Zeichen, damit auch auf kleinen Displays nichts abgeschnitten wird.
-5. Die Kernentität steht vorn, nicht am Ende.
+4. **70–95 Zeichen** für den `og:title`. Darunter bleibt Platz für den Haken ungenutzt, darüber
+   wird im Feed abgeschnitten. Bewertet wird der `og:title`, nicht die H1 — eine Titeländerung nur
+   an der H1 kommt im Feed nicht an.
+5. Die Kernentität steht in den ersten 40 Zeichen, nicht am Ende.
+
+Eine vollständige Bewertung der Headline über acht gewichtete Dimensionen samt Clickbait-Abzug
+leistet der Skill `discover-headline`. Ist er verfügbar, wird die Headline dort bewertet und das
+Ergebnis hier übernommen.
 
 ### Rote Flaggen
 
