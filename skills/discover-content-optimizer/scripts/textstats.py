@@ -219,9 +219,15 @@ def is_heading_line(line):
         return False
     if s.startswith("#"):
         return True
-    if s.endswith((".", "!", "?", ":", ";", ",")):
+    # Frage-Zwischenueberschriften ("Should you upgrade?") sind ausdruecklich
+    # erwuenscht und duerfen nicht am Fragezeichen scheitern.
+    if s.endswith((".", "!", ";", ",")):
         return False
     return len(words_of(s)) <= 12
+
+
+def count_question_headings(lines):
+    return sum(1 for l in lines if is_heading_line(l) and l.strip().endswith("?"))
 
 
 def find_markers(text, patterns):
@@ -491,6 +497,7 @@ def analyse(text, entities=None, lang="auto", core=None):
             "paragraphs_over_120w": sum(1 for p in paragraphs if len(words_of(p)) > 120),
             "subheadings_detected": len(heading_lines),
             "subheading_texts": heading_lines[:20],
+            "question_subheadings": count_question_headings(lines[1:]),
             "list_items": list_markers,
             "question_sentences": sum(1 for s in sentences if s.strip().endswith("?")),
             "quote_marks": len(re.findall(r"[\"“”„»«]", text)) // 2,
@@ -511,7 +518,11 @@ def analyse(text, entities=None, lang="auto", core=None):
             "over_65_chars": len(headline) > 65,
             "contains_number": bool(re.search(r"\d", headline)),
             "contains_colon_or_dash": bool(re.search(r"[:–—-]", headline)),
-            "direct_address": bool(re.search(r"\b(?:du|dein|deine|ihr|euer|your|you)\b", headline, re.I)),
+            "direct_address": bool(re.search(r"\b(?:du|dich|dir|dein\w*|euer|eure\w*|your|you)\b",
+                                            headline, re.I))
+                             # Hoeflichkeitsform: nur gross geschrieben, sonst
+                             # trifft jedes dritte "sie".
+                             or bool(re.search(r"\bSie\b|\bIhre?\w*\b", headline)),
             "question": headline.strip().endswith("?"),
         },
         "lead": {
