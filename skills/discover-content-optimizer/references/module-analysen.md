@@ -24,14 +24,35 @@ Diese Werte sind berechnet. Sie werden zitiert, nicht geschätzt.
 **Integrations-Score, Formel** (im Skript implementiert, hier zur Erklärung im Bericht):
 
 ```
-0,25 · min(1, Häufigkeit/3)
-+ 0,20 · min(1, Absatz-Spread/0,4)
+0,18 · min(1, Häufigkeit/2)
++ 0,17 · min(1, Absatz-Spread/0,35)
 + 0,25 · min(1, Ø-Top3-Kookkurrenz/0,35)
-+ 0,20 · (Anteil vorhandener Marker aus {Definition, Vergleich, Kausalität})
-+ 0,10 · min(1, Zahlen im Kontext/2)
++ 0,25 · (Anteil vorhandener Marker aus {Definition, Vergleich, Kausalität})
++ 0,15 · min(1, Zahlen im Kontext/2)
 ```
 
 Bänder: ≥ 0,65 `stark` · 0,40–0,64 `mittel` · < 0,40 `isoliert`.
+
+Kontext wiegt schwerer als Häufigkeit: eine einmalige, aber eingebettete Nennung
+(„Die HTW Berlin kommt in ihren Simulationen zu dem Ergebnis, dass …") ist besser integriert
+als fünf bloße Wiederholungen.
+
+### Kern- und Belegentitäten trennen — Pflicht
+
+`--core` erhält die **Kernentitäten**: das, worüber der Text handelt (3–8 Stück).
+`--entities` erhält alles Weitere, insbesondere **Belegentitäten** — Quellen, Institutionen,
+Normen, Studien, Behörden.
+
+Der Grund ist eine Kalibrierungsfalle: Belegentitäten werden in gut recherchierten Texten
+zu Recht nur einmal genannt. Zieht man sie in den Integrations-Mittelwert, sinkt der Wert
+eines quellenreichen Textes unter den eines quellenlosen. Im Test lag ein gut belegter Text
+bei 0,40 und ein inhaltsleerer bei 0,33 — praktisch gleich. Mit der Trennung: **0,67 gegen
+0,35**. Der Beitrag der Belegentitäten gehört in D5 (Vertrauen), nicht in D1.
+
+`entity_summary.basis` zeigt, welche Grundlage verwendet wurde (`core` oder `all`), und
+`entities.<x>.role` markiert jede Entität als `core` oder `supporting`. Wird `--core`
+weggelassen, fällt der Mittelwert auf alle Entitäten zurück — dann muss der Bericht das
+kennzeichnen, weil der Wert dann nicht mit anderen Analysen vergleichbar ist.
 
 > **Warum kein Embedding-Heatmap wie im Referenztool.** Ein Cosine-Heatmap über
 > Entitäts-Embeddings misst, wie ähnlich zwei Begriffe *im Modell* sind — „CPU" und „GPU" sind

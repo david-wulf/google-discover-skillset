@@ -63,15 +63,22 @@ URL für `mainEntityOfPage`.
 ### Schritt 1 — Metriken berechnen (immer zuerst)
 
 ```bash
-python scripts/textstats.py --text-file <pfad> --entities "Entität A,Entität B,..."
+python scripts/textstats.py --text-file <pfad> \
+  --core "Kernentität A,Kernentität B" \
+  --entities "Belegentität C,Belegentität D"
 ```
 
-Alternativ JSON auf stdin: `{"text": "...", "entities": [...], "lang": "de"}`.
+Alternativ JSON auf stdin: `{"text": "...", "core": [...], "entities": [...], "lang": "de"}`.
 
-Vorgehen: Skript **zweimal** laufen lassen. Erster Lauf ohne `--entities`, um Dokument-,
+Vorgehen: Skript **zweimal** laufen lassen. Erster Lauf ohne Entitäten, um Dokument-,
 Lesbarkeits-, Headline-, Faktendichte- und Keyword-Metriken zu bekommen. Danach Modul 1
-(Entitäten extrahieren), dann zweiter Lauf mit der Entitätenliste für Integrations-Score und
-Kookkurrenzmatrix.
+(Entitäten extrahieren), dann zweiter Lauf für Integrations-Score und Kookkurrenzmatrix.
+
+Beim zweiten Lauf zwingend `--core` und `--entities` trennen: `--core` sind die 3–8 Entitäten,
+worüber der Text handelt; `--entities` alles Weitere, besonders Quellen und Institutionen.
+Ohne diese Trennung ist der Integrations-Mittelwert unbrauchbar — Begründung in
+`references/module-analysen.md`. Entitäten in der **exakten Schreibweise des Textes** übergeben,
+sonst erscheinen sie unter `not_found`.
 
 Wenn Python fehlt: Modul für Modul weiterarbeiten, aber im Bericht unter „Methodik" vermerken,
 dass die Struktur- und Integrationswerte geschätzt statt berechnet sind. Nie berechnete Werte

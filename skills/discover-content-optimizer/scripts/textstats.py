@@ -411,14 +411,17 @@ def entity_stats(text, sentences, paragraphs, entities, lang):
         top3 = others[:3]
         cooc = sum(top3) / len(top3) if top3 else 0.0
 
-        freq_c = min(1.0, st["count"] / 3.0)
-        spread_c = min(1.0, st["paragraph_spread"] / 0.4)
+        # Gewichtung: Kontext schlaegt Haeufigkeit. Eine einmalige, aber
+        # eingebettete Nennung ("X kommt in Simulationen zu dem Ergebnis, dass
+        # ...") ist besser integriert als fuenf blosse Wiederholungen.
+        freq_c = min(1.0, st["count"] / 2.0)
+        spread_c = min(1.0, st["paragraph_spread"] / 0.35)
         ctx_hits = sum(1 for k in ("definition_markers", "comparison_markers", "causal_markers") if st[k])
         ctx_c = ctx_hits / 3.0
         num_c = min(1.0, st["numbers_in_context"] / 2.0)
 
-        score = 0.25 * freq_c + 0.20 * spread_c + 0.25 * min(1.0, cooc / 0.35) + \
-                0.20 * ctx_c + 0.10 * num_c
+        score = 0.18 * freq_c + 0.17 * spread_c + 0.25 * min(1.0, cooc / 0.35) + \
+                0.25 * ctx_c + 0.15 * num_c
         st["max_cooccurrence"] = round(max(others) if others else 0.0, 3)
         st["mean_top3_cooccurrence"] = round(cooc, 3)
         st["integration_score"] = round(min(1.0, score), 3)
@@ -432,8 +435,13 @@ def entity_stats(text, sentences, paragraphs, entities, lang):
 # Hauptanalyse
 # --------------------------------------------------------------------------- #
 
-def analyse(text, entities=None, lang="auto"):
+def analyse(text, entities=None, lang="auto", core=None):
     entities = entities or []
+    core = core or []
+    # Kernentitaeten sind automatisch Teil der Gesamtliste.
+    for c in core:
+        if c not in entities:
+            entities.append(c)
     text = text.replace("\r\n", "\n").strip()
     if lang == "auto" or lang not in STOPWORDS:
         lang = detect_lang(text)
@@ -530,13 +538,26 @@ def analyse(text, entities=None, lang="auto"):
     }
 
     if ent_stats:
-        bands = Counter(v["integration_band"] for v in ent_stats.values())
+        # Der Integrations-Mittelwert wird ueber die Kernentitaeten gebildet,
+        # sofern angegeben. Belegentitaeten (Quellen, Institutionen, Normen)
+        # werden im Text zu Recht nur einmal genannt — sie als "isoliert" in
+        # den Mittelwert zu ziehen wuerde gut belegte Texte bestrafen.
+        # Ihr Beitrag gehoert in die Vertrauensdimension, nicht hierher.
+        core_keys = [c for c in core if c in ent_stats] or list(ent_stats)
+        basis = "core" if core and any(c in ent_stats for c in core) else "all"
+        scoped = {k: ent_stats[k] for k in core_keys}
+        for k, v in ent_stats.items():
+            v["role"] = "core" if k in core_keys and basis == "core" else \
+                        ("supporting" if basis == "core" else "unspecified")
+        bands = Counter(v["integration_band"] for v in scoped.values())
         result["entity_summary"] = {
-            "count": len(ent_stats),
+            "basis": basis,
+            "count_total": len(ent_stats),
+            "count_scored": len(scoped),
             "bands": dict(bands),
             "mean_integration": round(
-                sum(v["integration_score"] for v in ent_stats.values()) / len(ent_stats), 3),
-            "isolated": sorted([k for k, v in ent_stats.items() if v["integration_band"] == "isoliert"]),
+                sum(v["integration_score"] for v in scoped.values()) / len(scoped), 3),
+            "isolated": sorted([k for k, v in scoped.items() if v["integration_band"] == "isoliert"]),
             "not_found": sorted([k for k, v in ent_stats.items() if v["count"] == 0]),
         }
     return result
@@ -554,14 +575,20 @@ def main():
     ap.add_argument("--input", help="Pfad zur JSON-Datei; ohne Angabe wird stdin gelesen")
     ap.add_argument("--text-file", help="Pfad zu einer reinen Textdatei (Alternative zu --input)")
     ap.add_argument("--entities", help="Kommagetrennte Entitaetenliste (nur mit --text-file)")
+    ap.add_argument("--core", help="Kommagetrennte Kernentitaeten. Der Integrations-Mittelwert "
+                                   "wird nur ueber diese gebildet; alles andere gilt als "
+                                   "Belegentitaet.")
     ap.add_argument("--lang", default="auto")
     args = ap.parse_args()
+
+    def split(v):
+        return [e.strip() for e in v.split(",") if e.strip()] if v else []
 
     if args.text_file:
         with open(args.text_file, encoding="utf-8") as fh:
             payload = {"text": fh.read()}
-        if args.entities:
-            payload["entities"] = [e.strip() for e in args.entities.split(",") if e.strip()]
+        payload["entities"] = split(args.entities)
+        payload["core"] = split(args.core)
         payload["lang"] = args.lang
     else:
         raw = open(args.input, encoding="utf-8").read() if args.input else sys.stdin.read()
@@ -569,7 +596,8 @@ def main():
 
     out = analyse(payload.get("text", ""),
                   payload.get("entities") or [],
-                  payload.get("lang", args.lang))
+                  payload.get("lang", args.lang),
+                  payload.get("core") or [])
     sys.stdout.write(json.dumps(out, ensure_ascii=False, indent=2))
 
 

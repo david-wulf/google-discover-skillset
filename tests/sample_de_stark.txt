@@ -1,0 +1,20 @@
+Balkonkraftwerk: 1,5 bis 10 kWh am Tag – daran liegt es
+
+Ein Balkonkraftwerk mit 800 Watt Wechselrichterleistung liefert an einem klaren Junitag rund 5 kWh, an einem trüben Dezembertag oft unter 0,5 kWh. Diese Spanne von Faktor zehn entscheidet darüber, ob sich die Anlage in vier oder in elf Jahren bezahlt.
+
+Ich habe zwei Anlagen über zwölf Monate mit einem Shelly-Zähler protokolliert: eine mit Südausrichtung und 30 Grad Neigung auf einem Garagendach, eine senkrecht am Südwest-Balkon im dritten Stock. Ergebnis: 940 kWh gegen 610 kWh im Jahr – bei identischen Modulen und identischem Wechselrichter.
+
+Die 800-Watt-Grenze deckelt den Ertrag
+Seit dem Solarpaket I vom Mai 2024 darf der Wechselrichter 800 Watt statt 600 Watt einspeisen. Die Modulleistung selbst ist auf 2.000 Watt Peak begrenzt. Wer 2.000 Wp Module an einen 800-Watt-Wechselrichter hängt, verliert an sonnigen Mittagen Leistung durch Abregelung – gewinnt aber morgens und abends, weil die Module früher die Schwelle erreichen. Die HTW Berlin kommt in ihren Simulationen zu dem Ergebnis, dass diese Überbelegung den Jahresertrag netto erhöht.
+
+Ausrichtung schlägt Modulleistung
+Süd mit 30 bis 35 Grad Neigung ist das Optimum. Eine senkrechte Montage am Balkongeländer kostet nach Angaben der Verbraucherzentrale NRW rund 25 bis 30 Prozent Jahresertrag gegenüber der optimalen Neigung. Ost-West-Ausrichtung liefert weniger Spitzenleistung, verteilt den Ertrag aber gleichmäßiger über den Tag – und trifft damit den Eigenverbrauch besser.
+
+Was zählt, ist die Eigenverbrauchsquote
+Entscheidend für die Wirtschaftlichkeit ist nicht der Ertrag, sondern der selbst verbrauchte Anteil. Ohne Speicher liegt die Eigenverbrauchsquote bei einem Zweipersonenhaushalt typischerweise bei 60 bis 70 Prozent. Bei 940 kWh Jahresertrag und 35 Cent pro Kilowattstunde ergibt das rund 230 Euro Ersparnis pro Jahr. Bei 610 kWh und derselben Quote sind es 150 Euro.
+
+Anmeldung: nur noch ein Schritt
+Die Anmeldung beim Netzbetreiber ist seit dem Solarpaket I entfallen. Bleibt die Registrierung im Marktstammdatenregister der Bundesnetzagentur – online, kostenlos, in etwa zehn Minuten. Der Schuko-Stecker ist nach der neuen VDE-Produktnorm VDE V 0126-95 zulässig; ein Elektriker ist für den Anschluss nicht mehr zwingend.
+
+Wann es sich nicht lohnt
+Bei Nordausrichtung, dauerhafter Verschattung durch Nachbargebäude oder einem Stromverbrauch unter 1.500 kWh im Jahr verlängert sich die Amortisation auf über zwölf Jahre. Bei einem Anschaffungspreis von 600 bis 900 Euro für ein 800-Watt-Set liegt die Anlage damit nahe an ihrer Garantiedauer. In diesen Fällen ist ein Stromtarifwechsel der schnellere Hebel.
