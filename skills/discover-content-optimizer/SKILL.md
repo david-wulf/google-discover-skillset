@@ -15,7 +15,7 @@ description: >
   "warum wird der Artikel nicht ausgespielt", "entity analysis", "content gap analysis".
   Auch auslösen, wenn nur ein Text mit der Bitte um Discover- oder Semantik-Bewertung eingereicht wird.
   Nicht verwenden für rein technische Prüfungen einer veröffentlichten URL (OG-Tags, Bildgröße,
-  News-Sitemap, Startseiten-Prominenz) — dafür ist der Skill discover-artikel-optimierer zuständig.
+  News-Sitemap, Startseiten-Prominenz) — dafür ist der Skill discover-readiness-artikel zuständig.
 ---
 
 # Discover Content Optimizer
@@ -163,7 +163,7 @@ Beleg und der Kunde muss das wissen.
 Diese Punkte gehören in den Methodik-Abschnitt jedes Berichts, wenn sie zutreffen:
 
 - Der Skill bewertet **Text**. Bildwirkung, `og:image`-Größe, `max-image-preview`, News-Sitemap
-  und Startseiten-Prominenz sind nicht Teil dieser Analyse → Skill `discover-artikel-optimierer`.
+  und Startseiten-Prominenz sind nicht Teil dieser Analyse → Skill `discover-readiness-artikel`.
 - „Fehlende Entitäten" ohne SERP-Daten sind eine begründete Vermutung, keine Messung.
 - Headline-Scores sind Rubrik-Werte, keine CTR-Prognose. Eine echte CTR-Schätzung liefert nur
   ein Test am Live-Feed oder ein trainiertes Modell.

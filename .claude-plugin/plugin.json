@@ -1,7 +1,7 @@
 {
-  "name": "seo-skillset",
-  "description": "Sieben Skills fuer Google Discover und Content-Qualitaet: Gesamtaudit als Orchestrierung, Domain-Audit, URL-Technik, Artikeltext, Headline mit pCTR-Modell, Titelbild bei echter Feed-Kartengroesse und ein kanalunabhaengiger Content-Checker. Mit dokumentierten Rubriken, Rechen-Backends und Belegpflicht.",
-  "version": "2.0.0",
+  "name": "google-discover-skillset",
+  "description": "Acht Skills fuer Google Discover und Content-Qualitaet: Gesamtaudit als Orchestrierung, Domain- und Artikel-Readiness, Artikeltext, Headline mit pCTR-Modell, Titelbild bei echter Feed-Kartengroesse, CTR-Optimierung mit statistischer Pruefung gegen GSC-Daten und ein kanalunabhaengiger Content-Checker.",
+  "version": "3.0.0",
   "author": {
     "name": "David Wulf Growth Consulting",
     "email": "wulf@homeandsmart.de"
@@ -11,10 +11,12 @@
     "content-analyse",
     "content-qualitaet",
     "ctr",
+    "ctr-optimierung",
     "discover-audit",
     "entitaeten",
     "feed-karte",
     "google-discover",
+    "gsc",
     "headline",
     "og-title",
     "pctr",
@@ -22,6 +24,7 @@
     "schema-org",
     "semantic-seo",
     "seo",
+    "signifikanz",
     "titelbild"
   ]
 }

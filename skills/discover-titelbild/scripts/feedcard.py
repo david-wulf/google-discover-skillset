@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-feedcard.py — Mess- und Render-Backend fuer den Skill discover-feedkarte.
+feedcard.py — Mess- und Render-Backend fuer den Skill discover-titelbild.
 
 Ein Discover-Titelbild wird nicht in Originalgroesse gesehen, sondern als
 Feed-Karte von rund 340 x 190 Punkten. Ob ein Motiv dort noch lesbar ist, laesst

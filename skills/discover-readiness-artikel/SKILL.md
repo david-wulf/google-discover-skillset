@@ -1,5 +1,5 @@
 ---
-name: discover-artikel-optimierer
+name: discover-readiness-artikel
 description: >
   Analysiert veröffentlichte Artikel anhand ihrer URL auf Google-Discover-Tauglichkeit.
   Prüft Headlines, OG-Tags, Titelbild, Entitäten-Vollständigkeit, News-Sitemap, Startseiten-Prominenz,
@@ -131,7 +131,7 @@ JSON.stringify({
   der das Meta-Tag überstimmt
 - Untauglich laut Doku: generische Motive, ausdrücklich das **Websitelogo**, vollgeschriebene Grafiken
 
-Für die **Bildwirkung** bei echter Kartengröße gibt es den Skill `discover-feedkarte` — er rendert
+Für die **Bildwirkung** bei echter Kartengröße gibt es den Skill `discover-titelbild` — er rendert
 das Bild auf 340 × 190 und 80 × 80 und beurteilt es dort. Ist er verfügbar, dort prüfen statt hier
 zu schätzen.
 
@@ -155,7 +155,7 @@ laufen lokal, ohne externe Tools und ohne Ausfallrisiko:
 | Hebel | Skill | Was er liefert |
 |-------|-------|----------------|
 | **Headline** (`og:title`) | `discover-headline` | pCTR-Modell mit acht gewichteten Dimensionen, Clickbait-Abzug, Variantenvergleich mit Delta |
-| **Titelbild** | `discover-feedkarte` | Spezifikationsprüfung plus Rendering auf echte Kartengröße 340 × 190 und 80 × 80 |
+| **Titelbild** | `discover-titelbild` | Spezifikationsprüfung plus Rendering auf echte Kartengröße 340 × 190 und 80 × 80 |
 | **Artikeltext** | `discover-content-optimizer` | Entitäten-Abdeckung und -Integration, semantische Lücken, JSON-LD, Keywords |
 
 Für den Hebel mit dem größten sichtbaren Defizit den passenden Skill aufrufen und dessen Ergebnis

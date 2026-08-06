@@ -322,5 +322,5 @@ ist damit eine begründete Vermutung.
 **Nicht Teil dieser Analyse:** Titelbild und dessen Maße, `og:image`, `max-image-preview`,
 News-Sitemap, Startseiten-Prominenz, Domain-Autorität und Publisher-Status. Die Bildwirkung ist
 neben der Headline der stärkste CTR-Hebel im Feed — dafür ist der Skill
-`discover-artikel-optimierer` an der veröffentlichten URL zuständig. Die Headline-Scores sind
+`discover-readiness-artikel` an der veröffentlichten URL zuständig. Die Headline-Scores sind
 Rubrik-Werte, keine CTR-Prognose.

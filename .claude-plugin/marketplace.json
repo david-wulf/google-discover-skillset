@@ -6,9 +6,9 @@
   },
   "plugins": [
     {
-      "name": "seo-skillset",
+      "name": "google-discover-skillset",
       "source": "./",
-      "description": "Sieben Skills fuer Google Discover und Content-Qualitaet. discover-gesamtaudit orchestriert die vollstaendige Pruefung ueber alle Ebenen. Darunter: google-discover-audit (Domain, Zulassung, Traffic nach Verzeichnis), discover-artikel-optimierer (URL-Technik), discover-content-optimizer (Artikeltext, Entitaeten), discover-headline (og:title mit pCTR-Modell), discover-feedkarte (Titelbild bei echter Kartengroesse) und content-checker (Textqualitaet, kanalunabhaengig)."
+      "description": "Acht Skills fuer Google Discover. discover-gesamtaudit orchestriert die vollstaendige Pruefung. Darunter: discover-readiness-domain (Zulassung, Traffic nach Verzeichnis), discover-readiness-artikel (URL-Technik), discover-content-optimizer (Artikeltext, Entitaeten), discover-headline (og:title mit pCTR-Modell), discover-titelbild (Bild bei echter Kartengroesse), discover-ctr-optimierung (gemessene CTR aus GSC, Signifikanzpruefung, Messplan) und content-checker (Textqualitaet, kanalunabhaengig)."
     }
   ]
 }

@@ -12,8 +12,8 @@ description: >
   "warum läuft Discover bei uns nicht", "Discover-Potenzialanalyse", "Discover-Beratung",
   "Rundum-Check Discover".
   Nicht verwenden, wenn nur ein einzelner Hebel geprüft werden soll — dann direkt den passenden
-  Skill: google-discover-audit (Domain), discover-artikel-optimierer (URL-Technik),
-  discover-content-optimizer (Text), discover-headline (Titel), discover-feedkarte (Bild).
+  Skill: discover-readiness-domain (Domain), discover-readiness-artikel (URL-Technik),
+  discover-content-optimizer (Text), discover-headline (Titel), discover-titelbild (Bild).
 ---
 
 # Discover Gesamtaudit — Orchestrierung
@@ -45,11 +45,18 @@ das passiert in der Praxis regelmäßig.
 
 | # | Ebene | Skill | Braucht | Liefert |
 |---|-------|-------|---------|---------|
-| 1 | **Zulassung und Domain** | `google-discover-audit` | Domain, GSC-Zugang | Stationsdiagnose, Traffic nach Verzeichnis, Zulassungs-Blocker |
-| 2 | **URL-Technik** | `discover-artikel-optimierer` | Artikel-URL | OG-Vollständigkeit, Schema, News-Sitemap, Startseiten-Prominenz, E-E-A-T im HTML |
+| 1 | **Zulassung und Domain** | `discover-readiness-domain` | Domain, GSC-Zugang | Stationsdiagnose, Traffic nach Verzeichnis, Zulassungs-Blocker |
+| 1b | **CTR-Diagnose** *(nur mit GSC)* | `discover-ctr-optimierung` | URL-Klicks und -Impressionen | Ob die CTR-Lücke statistisch belegt ist, welcher Engpass, Messplan |
+| 2 | **URL-Technik** | `discover-readiness-artikel` | Artikel-URL | OG-Vollständigkeit, Schema, News-Sitemap, Startseiten-Prominenz, E-E-A-T im HTML |
 | 3 | **Artikeltext** | `discover-content-optimizer` | Artikeltext | Discover Content Score, Entitäten, semantische Lücken, JSON-LD |
 | 4 | **Headline** | `discover-headline` | `og:title` plus Text | pCTR, Varianten, Delta, Clickbait |
-| 5 | **Titelbild** | `discover-feedkarte` | Bild-URL plus `og:title` | Feed-Karten-Score, „was in welcher Größe verschwindet" |
+| 5 | **Titelbild** | `discover-titelbild` | Bild-URL plus `og:title` | Feed-Karten-Score, „was in welcher Größe verschwindet" |
+
+**Ebene 1b ist der Wegweiser, wenn GSC angebunden ist.** Sie sagt, ob überhaupt ein CTR-Problem
+vorliegt und ob es bei diesem Impressionsvolumen belegbar ist — und damit, ob die Ebenen 4 und 5
+den Aufwand lohnen. Ohne diesen Schritt optimiert man leicht die Karte eines Artikels, der nur
+200 Impressionen hat und dessen CTR-Schwankung reines Rauschen ist. Sie liefert außerdem den
+Messplan, mit dem die Wirkung der Maßnahmen später überhaupt überprüfbar wird.
 
 Kanalunabhängige Textqualität (KI-Muster, Tiefe, Überschriften) prüft `content-checker`. Er ist
 **nicht** Teil dieser Kette, weil er nichts über Discover aussagt — bei Bedarf separat aufrufen und
@@ -74,7 +81,7 @@ weil die Daten die Auswahl treffen.
 
 ### Schritt 1 — Ebene 1: Zulassung und Domain
 
-`google-discover-audit` aufrufen.
+`discover-readiness-domain` aufrufen.
 
 **Danach die Abbruchprüfung.** Wenn eines davon zutrifft, wird gestoppt und gefragt:
 
@@ -94,17 +101,34 @@ Aus Ebene 1 mitnehmen: die **Stationsdiagnose** (an welcher Station hängt es) u
 **Verzeichnis mit dem größten Missverhältnis** zwischen Publikationsvolumen und
 Discover-Impressionen. Beides steuert, worauf die Ebenen 2–5 schauen.
 
+### Schritt 1b — CTR-Diagnose, wenn GSC angebunden ist
+
+`discover-ctr-optimierung` auf die ausgewählten Beispiel-URLs. Der Schritt kostet wenig und
+verhindert den häufigsten Fehlaufwand im ganzen Audit.
+
+Drei Ergebnisse steuern das weitere Vorgehen:
+
+| Ergebnis | Konsequenz |
+|----------|-----------|
+| **Zu wenige Impressionen** für eine belastbare CTR | Ebenen 4 und 5 sind nicht datengestützt begründbar. Sie können trotzdem laufen, aber als begründete Verbesserung statt als messbarer Hebel — und der Bericht sagt das |
+| **CTR belegt unter dem Referenzwert** | Ebenen 4 und 5 sind der Hebel. Die Engpass-Diagnose sagt, welche von beiden zuerst |
+| **CTR im Zielband, Abstand nicht belegt** | Der Hebel liegt woanders. Ebenen 4 und 5 auf Feinschliff reduzieren und den Aufwand in Ebene 2 und 3 stecken |
+
+Aus diesem Schritt außerdem mitnehmen: den **Messplan** (Portfolio- oder Einzelartikel-Messung,
+Gruppengröße, Zeitfenster) und die **URL-Entscheidung** je Artikel — optimieren oder neu aufsetzen.
+Beides gehört in den Maßnahmenteil des Berichts, weil es den Aufwand bestimmt.
+
 ### Schritt 2 — Ebenen 2 bis 5 je Artikel
 
 Pro Beispiel-Artikel in dieser Reihenfolge, weil jede Ebene der nächsten etwas liefert:
 
-1. **`discover-artikel-optimierer`** — holt das HTML und liefert `og:title`, Bild-URL und
+1. **`discover-readiness-artikel`** — holt das HTML und liefert `og:title`, Bild-URL und
    Schema-Befunde. Damit sind die Eingaben für Ebene 3–5 beschafft.
 2. **`discover-content-optimizer`** — braucht den Artikeltext. Liefert zusätzlich den **stärksten
    Fakt** des Textes, den Ebene 4 als Rohmaterial braucht.
 3. **`discover-headline`** — braucht `og:title` (nicht die H1) und den stärksten Fakt aus Ebene 3.
    Liefert den **empfohlenen Titel**, den Ebene 5 für die Doppelungsprüfung braucht.
-4. **`discover-feedkarte`** — braucht Bild-URL und den empfohlenen Titel aus Ebene 4.
+4. **`discover-titelbild`** — braucht Bild-URL und den empfohlenen Titel aus Ebene 4.
 
 Diese Kette ist der Grund für die Reihenfolge. Wer Ebene 5 vor Ebene 4 laufen lässt, prüft die
 Bild-Headline-Doppelung gegen den **alten** Titel und bekommt ein falsches Ergebnis.

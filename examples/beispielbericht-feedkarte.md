@@ -1,6 +1,6 @@
 # Feed-Karten-Analyse: „Wow! Top-Deal bei Kleines Kraftwerk mit Anker SOLIX 3"
 
-Beispielausgabe des Skills `discover-feedkarte` an einem echten, professionell produzierten
+Beispielausgabe des Skills `discover-titelbild` an einem echten, professionell produzierten
 Titelbild von homeandsmart.de. Zeigt, dass ein technisch einwandfreies Bild an der Kartengröße
 und am Zusammenspiel mit der Headline verlieren kann.
 
@@ -140,4 +140,4 @@ belastbar, die exakte Pixelzahl nicht. Der Score ist kein CTR-Wert.
 
 **Nicht Teil dieser Analyse:** Artikeltext, Entitätenabdeckung, Schema-Markup
 (→ `discover-content-optimizer`), News-Sitemap und Startseiten-Prominenz
-(→ `discover-artikel-optimierer`).
+(→ `discover-readiness-artikel`).

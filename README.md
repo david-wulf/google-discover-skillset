@@ -1,20 +1,21 @@
-# SEO Skillset — Google Discover und Content-Qualität
+# Google Discover Skillset
 
-Claude-Code-Plugin mit sieben Skills. Sechs davon decken Google Discover über alle Ebenen ab, einer
+Claude-Code-Plugin mit acht Skills. Sieben davon decken Google Discover über alle Ebenen ab, einer
 prüft Textqualität kanalunabhängig. Alle arbeiten mit dokumentierter Rubrik, Punkten pro
 Unterkriterium und Belegpflicht: jeder Befund zitiert die Textstelle oder benennt einen gemessenen
 Wert.
 
-## Die sieben Skills
+## Die acht Skills
 
 | Skill | Ebene | Ergebnis |
 |-------|-------|----------|
 | **discover-gesamtaudit** | Orchestrierung | Ruft die fünf Discover-Skills in der richtigen Reihenfolge auf, bricht bei Zulassungs-Blockern früh ab und fasst alles zu **einem** Bericht mit Stationsdiagnose zusammen |
-| **google-discover-audit** | Domain | Zulassung, Discover-Traffic **nach Verzeichnis**, Bild-Config, E-E-A-T, technische Signale · Readiness Score 0–100 |
-| **discover-artikel-optimierer** | veröffentlichte URL | OG-Vollständigkeit, Schema und Parsing-Priorität, News-Sitemap, Startseiten-Prominenz, Blocker-Tags |
+| **discover-readiness-domain** | Domain | Zulassung, Discover-Traffic **nach Verzeichnis**, Bild-Config, E-E-A-T, technische Signale · Readiness Score 0–100 |
+| **discover-readiness-artikel** | veröffentlichte URL | OG-Vollständigkeit, Schema und Parsing-Priorität, News-Sitemap, Startseiten-Prominenz, Blocker-Tags |
 | **discover-content-optimizer** | Artikeltext | Entitäten-Abdeckung und -Integration, semantische Lücken, JSON-LD, Keywords · Content Score 0–100 |
 | **discover-headline** | `og:title` | pCTR-Modell aus acht gewichteten Dimensionen, Clickbait-Abzug, Variantenvergleich mit Delta |
-| **discover-feedkarte** | Titelbild | Spezifikationsprüfung plus Rendering auf echte Kartengröße 340 × 190 und 80 × 80 · Karten-Score 0–100 |
+| **discover-titelbild** | Titelbild | Spezifikationsprüfung plus Rendering auf echte Kartengröße 340 × 190 und 80 × 80 · Karten-Score 0–100 |
+| **discover-ctr-optimierung** | gemessene CTR | Holt den CTR-Verlauf aus der GSC, prüft **statistisch** ob die Lücke echt ist, bestimmt den Engpass und baut einen belastbaren Messplan |
 | **content-checker** | Textqualität | 12 Qualitätskriterien: KI-Muster, fehlende Tiefe, Answer-First, Überschriften. **Kanalunabhängig** — sagt nichts über Discover |
 
 ### Warum die Reihenfolge zählt
@@ -37,10 +38,10 @@ verschiedenen Ebenen. Der Bericht führt sie nebeneinander und benennt den Engpa
 ## Installation
 
 ```bash
-/plugin marketplace add https://github.com/<user>/seo-skillset
+/plugin marketplace add https://github.com/david-wulf/google-discover-skillset
 ```
 
-Danach in der Plugin-Übersicht `seo-skillset` installieren.
+Danach in der Plugin-Übersicht `google-discover-skillset` installieren.
 
 Alternativ ohne Git: die Ordner unter `skills/` nach `~/.claude/skills/` kopieren.
 
@@ -48,9 +49,9 @@ Alternativ ohne Git: die Ordner unter `skills/` nach `~/.claude/skills/` kopiere
 
 | Skill | Braucht |
 |-------|---------|
-| discover-content-optimizer, discover-headline | Python 3.8+ (nur Standardbibliothek) |
-| discover-feedkarte | Python 3.8+ **und Pillow** (`pip install pillow`) |
-| google-discover-audit | Search-Console-Zugang für Traffic-Daten; ohne GSC läuft der technische Teil |
+| discover-content-optimizer, discover-headline, discover-ctr-optimierung | Python 3.8+ (nur Standardbibliothek) |
+| discover-titelbild | Python 3.8+ **und Pillow** (`pip install pillow`) |
+| discover-readiness-domain, discover-ctr-optimierung | Search-Console-Zugang per MCP für Messdaten; ohne GSC läuft der Rest, arbeitet dann aber prognostisch statt messend |
 | alle übrigen | nichts |
 
 Fehlt Python, werden berechnete Werte geschätzt statt gemessen — der Bericht weist das aus.
@@ -70,7 +71,8 @@ Einzelne Ebenen direkt:
 | Artikeltext | „Prüf diesen Text auf Discover-Tauglichkeit: <Text>" |
 | Headline | „Bewerte diese Headline" · „Was wäre eine gute Überschrift für X?" |
 | Titelbild | „Prüf das Titelbild dieser URL" · Screenshot einer Feed-Karte |
-| Textqualität | „Content-Check für diesen Artikel" |
+| CTR | „Warum klickt niemand auf diesen Artikel?“ · „Ist die CTR-Verbesserung signifikant?“ |
+| Textqualität | „Content-Check für diesen Artikel“ |
 
 Am Ende wird gefragt, ob zusätzlich ein Word-Bericht, eine Excel-Maßnahmenliste oder ein
 HTML-Einseiter erzeugt werden soll. Ohne Auswahl bleibt es beim Bericht im Chat.
@@ -98,12 +100,30 @@ Superlativ-Marker, Clickbait-Lexikon, erkannte Formeln, Position der Kernentitä
 die bewerteten Dimensionen in pCTR um und vergleicht gegen die Baseline.
 
 ```bash
-python skills/discover-feedkarte/scripts/feedcard.py --image <url> --out ansichten
+python skills/discover-titelbild/scripts/feedcard.py --image <url> --out ansichten
 ```
 
 Maße, Gesamtfläche, Seitenverhältnis samt Beschnittverlust, Format, Kontrast, Farbigkeit,
 Informationsverlust bei Feed-Größe, Auslieferung (HTTPS, Content-Type, Weiterleitung, Ladezeit) —
 plus drei gerenderte Ansichten.
+
+```bash
+python skills/discover-ctr-optimierung/scripts/ctrstats.py ci --clicks 412 --impressions 8300
+python skills/discover-ctr-optimierung/scripts/ctrstats.py compare --before 412/8300 --after 388/6900
+python skills/discover-ctr-optimierung/scripts/ctrstats.py power --baseline-ctr 0.062 --uplift-rel 0.15 --impressions-per-day 1200
+python skills/discover-ctr-optimierung/scripts/ctrstats.py mde --impressions 8300 --baseline-ctr 0.062
+```
+
+Wilson-Konfidenzintervall für die CTR, Zwei-Stichproben-z-Test für Vorher-Nachher,
+benötigte Impressionen für einen angestrebten Uplift und der kleinste bei gegebenem
+Volumen überhaupt nachweisbare Effekt.
+
+**Warum das nötig ist:** Eine CTR-Änderung von 6,25 % auf 6,75 % ist selbst bei 16.000
+Impressionen noch nicht signifikant (p ≈ 0,07). Bei 8.300 Impressionen sind nur Verbesserungen
+ab rund 18 % relativ nachweisbar. Und um +15 % zu belegen, braucht man bei 1.200 Impressionen pro
+Tag zehn Tage pro Variante — das Freshness-Fenster ist aber sieben Tage lang. Sequenzielles
+Messen an einem einzelnen Artikel ist damit strukturell nicht saubermachbar; der Skill schlägt
+deshalb einen Portfolio-Test über eine Artikelgruppe im gleichen Zeitfenster vor.
 
 ## Was bewusst anders ist als bei den Vorlagen
 
@@ -123,7 +143,7 @@ Die drei neu gebauten Skills orientieren sich an den Tools von metehan.ai, weich
    Variante deshalb nicht empfohlen, und das wird ausgewiesen.
 
 Zwei der drei Vorlagen waren beim Nachbau nicht funktionsfähig. Details in
-`skills/discover-artikel-optimierer/references/external-tools.md`.
+`skills/discover-readiness-artikel/references/external-tools.md`.
 
 ## Grenzen
 
@@ -134,6 +154,9 @@ Zwei der drei Vorlagen waren beim Nachbau nicht funktionsfähig. Details in
 - **Keine Lösung für fehlenden Site-Trust.** Ein Verzeichnis ohne thematische Autorität erkennt das
   Audit, löst es aber nicht.
 - **Discover ist ein Impuls, keine Basis.** Wer Discover als Grundlast plant, plant falsch.
+- **Kein A/B-Test möglich.** Discover liefert keine Varianten aus. Man kann nur ändern
+  und beobachten oder Artikelgruppen vergleichen — beides ist nicht randomisiert. Ein
+  signifikanter Unterschied belegt eine Veränderung, nicht deren Ursache.
 - **Evidenzstufen mitführen:** Kriterien sind als [Doku], [Richtlinie], [SDK] oder [Praxis]
   markiert. SDK-Erkenntnisse sind Client-Sicht zu einem Zeitpunkt — starkes Indiz, keine
   Spezifikation. Praxis-Heuristiken (News-Sitemap, Startseiten-Prominenz, Article-Schema,
@@ -146,11 +169,12 @@ Zwei der drei Vorlagen waren beim Nachbau nicht funktionsfähig. Details in
 .claude-plugin/plugin.json          Plugin-Manifest
 .claude-plugin/marketplace.json     Marketplace-Eintrag
 skills/discover-gesamtaudit/        Orchestrierung über alle Ebenen
-skills/google-discover-audit/       + references/discover-mechanik.md
-skills/discover-artikel-optimierer/ + references/discover-kriterien.md, external-tools.md
+skills/discover-readiness-domain/       + references/discover-mechanik.md
+skills/discover-readiness-artikel/ + references/discover-kriterien.md, external-tools.md
 skills/discover-content-optimizer/  + scripts/textstats.py, 4 references, HTML-Template
 skills/discover-headline/           + scripts/pctr.py, references/dimensionen.md, formeln.md
-skills/discover-feedkarte/          + scripts/feedcard.py, references/kartenrubrik.md
+skills/discover-titelbild/          + scripts/feedcard.py, references/kartenrubrik.md
+skills/discover-ctr-optimierung/    + scripts/ctrstats.py
 skills/content-checker/             Textqualität, kanalunabhängig
 examples/                           drei vollständige Beispielberichte
 tests/                              Beispieltexte und Testprotokoll

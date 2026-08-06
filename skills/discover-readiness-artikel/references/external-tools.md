@@ -12,7 +12,7 @@ abhängen, ob ein fremdes Deployment gerade läuft.
 | Hebel | Skill | Ersetzt |
 |-------|-------|---------|
 | **Headline** (`og:title`) | `discover-headline` | pCTR Predictor (pctr-discover.pages.dev) |
-| **Titelbild** | `discover-feedkarte` | Image-to-Google-Discover (HF Space metehan777) |
+| **Titelbild** | `discover-titelbild` | Image-to-Google-Discover (HF Space metehan777) |
 | **Artikeltext, Entitäten** | `discover-content-optimizer` | Advanced Google Discover Optimizer (Replit) |
 | **Textqualität, kanalunabhängig** | `content-checker` | — |
 
@@ -26,7 +26,7 @@ Bewertungsanker der Dimensionen sind ergänzt, weil das Original sie nicht verö
 liegt bei 11,3 % und damit über dem Arbeitsziel von 7–9 % — ein mittelmäßiger Titel bekommt sonst
 eine zu freundliche Zahl.
 
-### discover-feedkarte
+### discover-titelbild
 
 Misst die Google-Spezifikation (Breite ≥ 1200 px, Fläche > 300.000 px, 16:9, Format) und die
 Auslieferung (HTTPS, Content-Type, Weiterleitung, Downloadzeit), rendert das Bild dann auf die

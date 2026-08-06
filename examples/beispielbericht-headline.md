@@ -105,6 +105,6 @@ Varianten gleich, deshalb ist das **Delta** belastbar und der Absolutwert nicht.
 **Geschätzt statt geprüft:** Die `clickbait_score`-Werte, weil zu keinem der fünf Titel der
 Artikeltext vorlag. Nur mit Text ist prüfbar, ob ein Titel einlöst.
 
-**Nicht Teil dieser Analyse:** Titelbild und Feed-Karte (→ `discover-feedkarte`), Artikeltext und
+**Nicht Teil dieser Analyse:** Titelbild und Feed-Karte (→ `discover-titelbild`), Artikeltext und
 Entitätenabdeckung (→ `discover-content-optimizer`). Und: ob der Artikel überhaupt Impressionen
 bekommt, entscheidet die Eligibility-Stufe vor dem Titel.

@@ -1,5 +1,5 @@
 ---
-name: discover-feedkarte
+name: discover-titelbild
 description: >
   Bewertet die Google-Discover-Feed-Karte als Einheit: Titelbild und Headline zusammen, so wie
   der Nutzer sie im Feed sieht. Misst das Bild technisch (Breite, Seitenverhältnis, Format,
@@ -15,7 +15,7 @@ description: >
   oder wenn nur ein Bild plus Headline zur Beurteilung kommt.
   Für die semantische Textanalyse ist discover-content-optimizer zuständig, für die technische
   Prüfung der veröffentlichten Seite (News-Sitemap, Startseiten-Prominenz) der
-  discover-artikel-optimierer.
+  discover-readiness-artikel.
 ---
 
 # Discover Feed-Karte
@@ -203,10 +203,10 @@ ungefragt erzeugen.
 
 | Skill | Zuständig für |
 |-------|---------------|
-| **discover-feedkarte** | Titelbild und Feed-Karte: Bild, Beschnitt, Lesbarkeit, Bild-Headline-Zusammenspiel |
+| **discover-titelbild** | Titelbild und Feed-Karte: Bild, Beschnitt, Lesbarkeit, Bild-Headline-Zusammenspiel |
 | discover-headline | den `og:title` selbst: acht gewichtete Dimensionen, Clickbait-Abzug, Variantenvergleich |
 | discover-content-optimizer | Artikeltext: Entitäten, semantische Tiefe, Schema, Keywords |
-| discover-artikel-optimierer | veröffentlichte Seite: OG-Vollständigkeit, News-Sitemap, Startseiten-Prominenz, E-E-A-T-Signale im HTML |
+| discover-readiness-artikel | veröffentlichte Seite: OG-Vollständigkeit, News-Sitemap, Startseiten-Prominenz, E-E-A-T-Signale im HTML |
 
 Überschneidung ist gewollt bei `max-image-preview:large` und der Bildbreite — beide Skills
 prüfen das, weil beide es brauchen. Die Bildwirkung prüft nur dieser Skill.

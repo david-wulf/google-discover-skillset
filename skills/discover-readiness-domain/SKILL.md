@@ -1,5 +1,5 @@
 ---
-name: google-discover-audit
+name: discover-readiness-domain
 description: "Analysiert eine Domain auf Google Discover-Optimierung: Discover-Traffic, Content-Qualität, technische Signale und E-E-A-T. Verwende diesen Skill immer, wenn der User nach Google Discover fragt, Discover-Traffic analysieren will, wissen möchte ob seine Seite Discover-ready ist, oder die Discover-Performance einer Domain bewerten will. Auch auslösen bei: 'Discover Check', 'Discover Audit', 'Discover optimieren', 'Discover Traffic', 'warum bin ich nicht in Discover', 'Discover-Potenzial', 'wie performe ich in Discover', 'Discover-Analyse'. Selbst wenn der User nur beiläufig Google Discover erwähnt — diesen Skill nutzen."
 ---
 
@@ -40,10 +40,10 @@ zuständig, auf die am Ende verwiesen wird statt deren Arbeit hier grob nachzuah
 
 | Skill | Ebene |
 |-------|-------|
-| `discover-artikel-optimierer` | veröffentlichte URL: OG-Vollständigkeit, News-Sitemap, Startseiten-Prominenz |
+| `discover-readiness-artikel` | veröffentlichte URL: OG-Vollständigkeit, News-Sitemap, Startseiten-Prominenz |
 | `discover-content-optimizer` | Artikeltext: Entitäten, semantische Tiefe, Schema, Keywords |
 | `discover-headline` | `og:title`: pCTR-Modell, Varianten, Clickbait |
-| `discover-feedkarte` | Titelbild bei echter Kartengröße |
+| `discover-titelbild` | Titelbild bei echter Kartengröße |
 
 Wenn in Phase 2 auffällt, dass die Schwäche an einem einzelnen Hebel hängt (etwa durchgehend
 schwache Titel oder Bilder unter der Spezifikation), gehört in die Empfehlung der Verweis auf den
@@ -179,7 +179,7 @@ Deshalb wird beides geprüft.
 das SDK kennt einen ausdrücklichen Negativmarker `LOW_QUALITY_IMAGE`, es gibt also nicht nur „gut
 genug", sondern eine benannte Abwertung. Ab 1600 px Breite ist man auf der sicheren Seite.
 
-Für die **Bildwirkung** bei echter Kartengröße ist der Skill `discover-feedkarte` zuständig — er
+Für die **Bildwirkung** bei echter Kartengröße ist der Skill `discover-titelbild` zuständig — er
 rendert das Bild auf 340 × 190 und 80 × 80 und beurteilt es dort. Wenn die Bilder technisch in
 Ordnung sind und die CTR trotzdem unter 5 % liegt, dorthin verweisen.
 

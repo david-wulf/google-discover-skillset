@@ -16,7 +16,7 @@ description: >
   Artikel vorliegt und Titelvorschläge gewünscht sind, oder wenn nur ein Thema genannt wird und
   Titelideen dafür gesucht werden.
   Für den Artikeltext ist discover-content-optimizer zuständig, für Titelbild und Feed-Karte
-  discover-feedkarte.
+  discover-titelbild.
 ---
 
 # Discover Headline
@@ -170,7 +170,7 @@ ineinander:
 | Skill | Hebel | Übergabe |
 |-------|-------|----------|
 | **discover-headline** | Titel | liefert den bewerteten `og:title` |
-| discover-feedkarte | Titelbild und Karte | braucht den `og:title`, um zu prüfen, ob der Bildschriftzug ihn doppelt (K4 4a) |
+| discover-titelbild | Titelbild und Karte | braucht den `og:title`, um zu prüfen, ob der Bildschriftzug ihn doppelt (K4 4a) |
 | discover-content-optimizer | Artikeltext | braucht den Titel für die Headline-Dimension (D2) und liefert umgekehrt den stärksten Fakt für die Titelarbeit |
 
 Praktisch heißt das:
@@ -179,7 +179,7 @@ Praktisch heißt das:
   **stärksten Fakt** des Artikels als Rohmaterial für die Varianten verwenden. Ein Titel kann
   keinen Fakt tragen, den der Text nicht hat — dann ist die Titelarbeit nachrangig und das gehört
   in den Bericht.
-- Wird `discover-feedkarte` danach aufgerufen, den empfohlenen Titel dorthin übergeben, damit die
+- Wird `discover-titelbild` danach aufgerufen, den empfohlenen Titel dorthin übergeben, damit die
   Doppelungsprüfung gegen den **neuen** Titel läuft.
 - Ist einer der anderen Skills verfügbar und passt zur Frage, darauf hinweisen statt die fremde
   Dimension mitzubeurteilen. Es gibt keine harte Abhängigkeit: jeder Skill funktioniert allein.

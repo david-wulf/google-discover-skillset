@@ -37,7 +37,7 @@ stärkste Hebel zur Entitäts-Disambiguierung, den ein Publisher selbst in der H
 
 Für Bilder gilt eine Mindestbreite von 1200 px für die große Feed-Karte. Das ist ein
 technischer Check am veröffentlichten Dokument und damit Sache des Skills
-`discover-artikel-optimierer`, nicht dieses Skills.
+`discover-readiness-artikel`, nicht dieses Skills.
 
 *Quellen für diesen Abschnitt: metehan.ai, „Google Discover Architecture: Clusters,
 Classifiers, OG Tags, NAIADES". Serverseitige Gewichtungen sind von außen nicht messbar —
