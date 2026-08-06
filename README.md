@@ -1,27 +1,46 @@
-# Discover Content Optimizer
+# SEO Skillset — Google Discover und Content-Qualität
 
-Claude-Code-Plugin mit drei Skills für **Google Discover** und **AI-Sichtbarkeit**. Zusammen
-decken sie die drei Hebel ab, die im Feed über den Klick entscheiden: **Inhalt, Headline, Titelbild**.
+Claude-Code-Plugin mit sieben Skills. Sechs davon decken Google Discover über alle Ebenen ab, einer
+prüft Textqualität kanalunabhängig. Alle arbeiten mit dokumentierter Rubrik, Punkten pro
+Unterkriterium und Belegpflicht: jeder Befund zitiert die Textstelle oder benennt einen gemessenen
+Wert.
 
-| Skill | Prüft | Ergebnis |
+## Die sieben Skills
+
+| Skill | Ebene | Ergebnis |
 |-------|-------|----------|
-| **discover-content-optimizer** | den **Artikeltext**: kann Google ihn einem Thema, einer Entität und einem Nutzerinteresse zweifelsfrei zuordnen? | Discover Content Score 0–100, Maßnahmenplan, fertige Textbausteine, JSON-LD |
-| **discover-headline** | den **`og:title`**: acht gewichtete Qualitätsdimensionen, Clickbait-Abzug, Variantenvergleich | pCTR pro Variante, Delta zur Baseline in Prozentpunkten, ausgeschriebene Empfehlung |
-| **discover-feedkarte** | die **Feed-Karte**: Titelbild und Headline als Einheit, gerendert auf echte Kartengröße | Feed-Karten-Score 0–100, Tabelle „was in welcher Größe verschwindet", Bildaufträge |
+| **discover-gesamtaudit** | Orchestrierung | Ruft die fünf Discover-Skills in der richtigen Reihenfolge auf, bricht bei Zulassungs-Blockern früh ab und fasst alles zu **einem** Bericht mit Stationsdiagnose zusammen |
+| **google-discover-audit** | Domain | Zulassung, Discover-Traffic **nach Verzeichnis**, Bild-Config, E-E-A-T, technische Signale · Readiness Score 0–100 |
+| **discover-artikel-optimierer** | veröffentlichte URL | OG-Vollständigkeit, Schema und Parsing-Priorität, News-Sitemap, Startseiten-Prominenz, Blocker-Tags |
+| **discover-content-optimizer** | Artikeltext | Entitäten-Abdeckung und -Integration, semantische Lücken, JSON-LD, Keywords · Content Score 0–100 |
+| **discover-headline** | `og:title` | pCTR-Modell aus acht gewichteten Dimensionen, Clickbait-Abzug, Variantenvergleich mit Delta |
+| **discover-feedkarte** | Titelbild | Spezifikationsprüfung plus Rendering auf echte Kartengröße 340 × 190 und 80 × 80 · Karten-Score 0–100 |
+| **content-checker** | Textqualität | 12 Qualitätskriterien: KI-Muster, fehlende Tiefe, Answer-First, Überschriften. **Kanalunabhängig** — sagt nichts über Discover |
 
-Alle drei arbeiten mit dokumentierter Rubrik, Punkten pro Unterkriterium und Belegpflicht: jeder
-Befund zitiert die Textstelle oder benennt, was in welcher Bildansicht sichtbar ist. Sie greifen
-an definierten Stellen ineinander — der Content-Skill liefert den stärksten Fakt für die
-Titelarbeit, der Headline-Skill den `og:title`, gegen den der Karten-Skill prüft, ob der
-Bildschriftzug ihn doppelt — sind aber jeweils allein funktionsfähig.
+### Warum die Reihenfolge zählt
+
+Es ist sinnlos, Headline und Bild zu optimieren, wenn die Domain im betroffenen Verzeichnis gar
+nicht discover-fähig ist. Genau das passiert in der Praxis regelmäßig. Deshalb prüft
+`discover-gesamtaudit` von unten nach oben und bricht ab, wenn eine Vorstufe blockiert:
+
+```
+Zulassung  →  Domain-Traffic  →  URL-Technik  →  Artikeltext  →  Headline  →  Titelbild
+   ▲                                                  │             │
+   └── manuelle Maßnahme, notranslate,                 │             └── liefert den Titel,
+       max-image-preview → Abbruch                     └── liefert den      gegen den die Karte
+                                                           stärksten Fakt   auf Doppelung prüft
+```
+
+Die Einzelscores werden **nicht** zu einer Gesamtnote verrechnet — sie messen Verschiedenes auf
+verschiedenen Ebenen. Der Bericht führt sie nebeneinander und benennt den Engpass.
 
 ## Installation
 
 ```bash
-/plugin marketplace add https://<git-host>/<pfad>/discover-content-optimizer
+/plugin marketplace add https://github.com/<user>/seo-skillset
 ```
 
-Danach in der Plugin-Übersicht `discover-content-optimizer` installieren.
+Danach in der Plugin-Übersicht `seo-skillset` installieren.
 
 Alternativ ohne Git: die Ordner unter `skills/` nach `~/.claude/skills/` kopieren.
 
@@ -29,210 +48,110 @@ Alternativ ohne Git: die Ordner unter `skills/` nach `~/.claude/skills/` kopiere
 
 | Skill | Braucht |
 |-------|---------|
-| discover-content-optimizer | Python 3.8+ (nur Standardbibliothek). Fehlt Python, werden Struktur- und Integrationswerte geschätzt statt berechnet — der Bericht weist das aus |
-| discover-headline | Python 3.8+ (nur Standardbibliothek) |
-| discover-feedkarte | Python 3.8+ **und Pillow** (`pip install pillow`). Ohne Pillow entfällt der Kartengrößen-Test; der Score wird entsprechend gedeckelt statt geschätzt |
+| discover-content-optimizer, discover-headline | Python 3.8+ (nur Standardbibliothek) |
+| discover-feedkarte | Python 3.8+ **und Pillow** (`pip install pillow`) |
+| google-discover-audit | Search-Console-Zugang für Traffic-Daten; ohne GSC läuft der technische Teil |
+| alle übrigen | nichts |
+
+Fehlt Python, werden berechnete Werte geschätzt statt gemessen — der Bericht weist das aus.
 
 ## Nutzung
 
-**Text prüfen:**
-
 ```
-Prüf diesen Artikel auf Discover-Tauglichkeit:
-<Text, erste Zeile = Headline>
+Mach ein komplettes Discover-Audit für example.de
 ```
 
-Auch möglich: URL statt Text, plus optional ein Wettbewerbertext für die Gap-Analyse. Der Skill
-fragt nach dem Domain-Profil, wenn es nicht aus dem Text hervorgeht: Technologie · Gesundheit ·
-Finanzen · Bildung · E-Commerce · News · Flash News · Allgemein. Das Profil steuert, welche
-Entitäten erwartet und welche Vertrauenssignale gewichtet werden.
+Einzelne Ebenen direkt:
 
-**Headline prüfen:**
+| Anliegen | Formulierung |
+|----------|--------------|
+| Domain-Check | „Ist example.de Discover-ready?" |
+| URL-Technik | „Prüf diesen Artikel für Discover: <url>" |
+| Artikeltext | „Prüf diesen Text auf Discover-Tauglichkeit: <Text>" |
+| Headline | „Bewerte diese Headline" · „Was wäre eine gute Überschrift für X?" |
+| Titelbild | „Prüf das Titelbild dieser URL" · Screenshot einer Feed-Karte |
+| Textqualität | „Content-Check für diesen Artikel" |
 
-```
-Bewerte diese Headline für Discover und schlag Varianten vor:
-<Titel>
-```
+Am Ende wird gefragt, ob zusätzlich ein Word-Bericht, eine Excel-Maßnahmenliste oder ein
+HTML-Einseiter erzeugt werden soll. Ohne Auswahl bleibt es beim Bericht im Chat.
 
-Bis zu fünf Titel auf einmal, einer pro Zeile — der erste gilt als Baseline.
+## Rechen-Backends
 
-**Feed-Karte prüfen:**
+Drei Skills rechnen statt zu schätzen. Direkt aufrufbar:
 
-```
-Prüf das Titelbild dieser URL für Discover: <url>
-```
-
-Ebenfalls möglich: Bilddatei plus Headline, oder ein Screenshot einer Discover-Karte — dann
-braucht es keinen Seitenzugriff und keine Paywall-Umgehung.
-
-In allen Fällen wird am Ende gefragt, ob zusätzlich ein Word-Bericht, eine Excel-Maßnahmenliste
-oder ein HTML-Einseiter erzeugt werden soll. Ohne Auswahl bleibt es beim Bericht im Chat.
-
-## Skill 1: discover-content-optimizer — was analysiert wird
-
-| Modul | Inhalt |
-|-------|--------|
-| 1 Entitäten | Entitäten nach Typ, explizite Beziehungen, fehlende Entitäten mit Priorität und Einbauort |
-| 2 Content | Original-Headline bewertet, 5 Varianten mit je eigener Formel, semantische Anreicherung, Topic-Cluster, Struktur, interne Verlinkung, Wettbewerbs-Gap |
-| 3 Schema | JSON-LD generiert (inkl. `about[]`/`mentions`/`sameAs`) und in vier Blöcken validiert |
-| 4 Keywords | thematische Kernbegriffe vs. TF-IDF-Spitzen, primär/sekundär, Cluster, Platzierung, Long-Tail |
-| 5 Semantik | Entitäten-Integrationsmatrix, Kookkurrenz, fehlende semantische Konzepte mit Relevanz |
-
-### Score
-
-| Dimension | Punkte |
-|-----------|--------|
-| Entitäten-Abdeckung und -Tiefe | 25 |
-| Headline und Einstieg | 20 |
-| Semantische Vollständigkeit | 20 |
-| Struktur und Lesbarkeit | 15 |
-| Vertrauen und Maschinenlesbarkeit | 20 |
-
-Bänder: 85–100 Discover-ready · 70–84 solide · 55–69 mittel · 40–54 schwach · <40 nicht
-Discover-fähig. Deckel verhindern Schönfärberei: ohne Entitätenabdeckung ist bei 65 Schluss,
-ohne benannte Quelle und ohne Faktendichte bei 55.
-
-Die vollständige Rubrik steht in `skills/discover-content-optimizer/references/scoring.md`
-und wird im Bericht mit Punkten pro Unterkriterium offengelegt.
-
-## Skill 2: discover-headline — der `og:title` mit pCTR-Modell
-
-Der Titel ist das wichtigste Einzelelement in Discover und laut SDK-Befunden **direkter Input in
-Googles pCTR-Modell**, nicht bloß ein Anzeigetext. Der Skill misst zuerst die Titelmerkmale, dann
-werden acht Dimensionen nach dokumentierten Ankern bewertet und in einen Prozentwert umgerechnet:
-
-```
-quality = Σ(wᵢ × fᵢ)            entity_density 22 % · topic_clarity 18 %
-β       = 1 − 0,35 × (cb / 10)  informational_value 16 % · freshness_signal 12 %
-raw     = quality × β           engagement_depth 10 % · title_formatting 8 %
-pCTR    = 0,5 % + 21,5 % × σ(0,65 × (raw − 5,5))    natural_authority 8 % · visual_promise 6 %
+```bash
+python skills/discover-content-optimizer/scripts/textstats.py \
+  --text-file artikel.txt --core "Kernentität" --entities "Quelle"
 ```
 
-Formel, Gewichte und Bandgrenzen sind aus dem [pCTR Predictor](https://pctr-discover.pages.dev/)
-von metehan.ai übernommen, damit die Werte vergleichbar bleiben. Zwei Kalibrierungsschwächen des
-Modells sind dokumentiert und werden im Bericht benannt:
+Dokumentstatistik, Lesbarkeit (Flesch bzw. Flesch-Amstad), Headline- und Lead-Metriken,
+Faktendichte, thematische Kernbegriffe gegen TF-IDF-Spitzen, Trust-Marker, Integrations-Score je
+Entität, Kookkurrenzmatrix.
 
-- **Der Mittelpunkt liegt zu hoch.** raw = 5,5 ergibt 11,3 % — der beobachtete CTR-Durchschnitt
-  von News-Seiten. Ein mittelmäßiger Titel bekommt dadurch das Band „hoch". Entscheidungsgrundlage
-  ist deshalb das **Delta zwischen den Varianten**, nicht der Absolutwert.
-- **Der Clickbait-Abzug ist zu schwach.** β kappt maximal 35 %; ein maximal manipulativer Titel
-  mit sonst hohen Werten erreicht noch 14,6 % und das Band „top". Deshalb gilt außerhalb der Formel
-  ein **Veto ab `clickbait_score` 6** — die Variante wird nicht empfohlen, und das wird ausgewiesen.
+```bash
+python skills/discover-headline/scripts/pctr.py features --titles-file titel.txt --entity "Marke"
+python skills/discover-headline/scripts/pctr.py score --input bewertung.json
+```
 
-Die Bewertungsanker der acht Dimensionen veröffentlicht das Original nicht; sie sind in
-`references/dimensionen.md` ergänzt, weil die Bewertung ohne sie nicht reproduzierbar wäre.
+`features` misst Länge und Längenband, Zahlen, Ansprache, Autoritäts-, Frische- und
+Superlativ-Marker, Clickbait-Lexikon, erkannte Formeln, Position der Kernentität. `score` rechnet
+die bewerteten Dimensionen in pCTR um und vergleicht gegen die Baseline.
 
-## Skill 3: discover-feedkarte — das Bild dort prüfen, wo es wirkt
+```bash
+python skills/discover-feedkarte/scripts/feedcard.py --image <url> --out ansichten
+```
 
-Im Feed konkurriert kein Artikel, sondern eine Karte von rund 340 × 190 Punkten, wahrgenommen im
-Scrollen. Ein Titelbild, das in Originalgröße überzeugt, kann dort vollständig versagen. Der Skill
-misst das Bild und **rendert es auf die echten Kartengrößen**, bevor er urteilt:
+Maße, Gesamtfläche, Seitenverhältnis samt Beschnittverlust, Format, Kontrast, Farbigkeit,
+Informationsverlust bei Feed-Größe, Auslieferung (HTTPS, Content-Type, Weiterleitung, Ladezeit) —
+plus drei gerenderte Ansichten.
 
-| Ansicht | Wofür |
-|---------|-------|
-| 340 × 190 | die große Feed-Karte — Hauptbewertungsgrundlage |
-| 80 × 80 | kompakte Listenansicht — zeigt, was ein quadratischer Beschnitt zerstört |
-| 16:9-Beschnitt | zeigt bei abweichendem Seitenverhältnis, was wegfällt |
+## Was bewusst anders ist als bei den Vorlagen
 
-Gemessen werden Breite, Seitenverhältnis samt Beschnittverlust, Format und Dateigröße,
-Helligkeit, RMS-Kontrast, ausgebrannte Flächen, Farbigkeit nach Hasler-Süsstrunk und der
-Informationsverlust bei Feed-Größe. Visuell beurteilt werden Erkennbarkeit der Kern-Entität,
-Bildsprache, Schriftlesbarkeit, Wirkung des Beschnitts und das Markenverhältnis.
+Die drei neu gebauten Skills orientieren sich an den Tools von metehan.ai, weichen aber ab:
 
-| Dimension | Punkte |
-|-----------|-------:|
-| Technische Auslieferbarkeit | 25 |
-| Bildaussage | 30 |
-| Tauglichkeit bei Kartengröße | 25 |
-| Zusammenspiel mit der Headline | 20 |
+1. **Der Ist-Zustand wird bewertet.** Original-Headline und vorhandenes Bild bekommen einen Score,
+   bevor Alternativen entstehen. Sonst ist nicht messbar, ob eine Alternative besser ist.
+2. **Kalibrierte Scores.** Anti-Inflations-Regeln erzwingen Spreizung. Im Test des Originals lagen
+   alle Headline-Varianten eines inhaltsleeren Textes bei 87–92 von 100, die höchste Note ging an
+   die generischste Variante.
+3. **Integrations-Score statt Embedding-Heatmap.** Cosine-Ähnlichkeit von Entitäts-Embeddings misst
+   Modellähnlichkeit, nicht Textqualität — solche Matrizen liegen praktisch immer im Band 0,8–1,0.
+   Stattdessen wird berechnet, ob *dieser Text* die Entität einbindet.
+4. **Das Bild wird in Kartengröße geprüft**, nicht in Originalgröße.
+5. **Clickbait-Veto außerhalb der Formel.** Der β-Abzug des pCTR-Modells kappt maximal 35 %; ein
+   maximal manipulativer Titel erreicht damit noch das Band „top". Ab `clickbait_score` 6 wird eine
+   Variante deshalb nicht empfohlen, und das wird ausgewiesen.
 
-Deckel: unter 1200 px Breite ist bei 55 Schluss, ohne `max-image-preview:large` bei 60, und wenn
-die Kern-Entität im Bild nicht erkennbar ist bei 50.
-
-Der wichtigste Ausgabeteil ist die Tabelle **„was in welcher Größe verschwindet"** — Element für
-Element, in welcher Ansicht es noch sichtbar ist. Beispiel aus
-[examples/beispielbericht-feedkarte.md](examples/beispielbericht-feedkarte.md): bei einem
-technisch einwandfreien 1600 × 900-Bild fallen im quadratischen Beschnitt Logo und Markenblock
-komplett weg, übrig bleibt das Fragment „000 WATT".
-
-## Was die Skills bewusst anders machen
-
-Sie orientieren sich am Funktionsumfang des *Advanced Google Discover Optimizer* von
-metehan.ai, weichen aber an vier Stellen ab:
-
-1. **Der Ist-Zustand wird bewertet.** Die Original-Headline bekommt einen Score, bevor
-   Alternativen entstehen. Sonst ist nicht messbar, ob eine Alternative besser ist.
-2. **Kalibrierte Scores.** Anti-Inflations-Regeln erzwingen Spreizung: höchstens eine
-   Headline-Variante darf ≥ 9,0 erreichen, eine Headline ohne Zahl oder Eigennamen kommt nie
-   über 6,0. Ein Score, bei dem alles gut ist, ist wertlos.
-3. **Integrations-Score statt Embedding-Heatmap.** Eine Cosine-Matrix über
-   Entitäts-Embeddings misst Modellähnlichkeit — „CPU" und „GPU" sind sich immer ähnlich,
-   unabhängig vom Artikel; solche Matrizen liegen praktisch immer im Band 0,8–1,0 und
-   unterscheiden nichts. Stattdessen wird berechnet, ob *dieser Text* die Entität einbindet:
-   Häufigkeit, Absatz-Spread, Ko-Vorkommen mit anderen Entitäten, Definitions-, Vergleichs-
-   und Kausalmarker, Faktendichte im Umfeld. Reproduzierbar, ohne API und ohne Kosten.
-4. **Das Bild wird in Kartengröße geprüft.** Das metehan-Tool
-   *image-to-google-discover* trägt „image" im Namen, nimmt einen Screenshot aber nur als
-   Eingabeformat und prüft nirgends Bildbreite, Beschnitt, Kontrast oder Lesbarkeit als
-   Thumbnail. `discover-feedkarte` rendert das Bild auf 340 × 190 und 80 × 80 und beurteilt es
-   dort — die Größe, in der es tatsächlich wahrgenommen wird.
+Zwei der drei Vorlagen waren beim Nachbau nicht funktionsfähig. Details in
+`skills/discover-artikel-optimierer/references/external-tools.md`.
 
 ## Grenzen
 
-- Der Textskill analysiert **Text**, der Kartenskill **Bild und Headline**. News-Sitemap,
-  OG-Vollständigkeit und Startseiten-Prominenz sind in keinem von beiden.
-- „Fehlende Entitäten" sind ohne SERP-Daten eine begründete Vermutung, keine Messung. Sind
-  SERP-MCPs verfügbar (DataForSEO, Ahrefs, SurferSEO), wird der Erwartungsraum aus real
-  rankenden Seiten gebildet und das im Bericht ausgewiesen.
-- Beide Scores sind Rubrik-Werte, keine CTR-Prognose.
-- Die Kartenmaße 340 × 190 und 80 × 80 sind Größenordnungen der ausgelieferten Karten, keine von
-  Google dokumentierten Spezifikationen. „Bei dieser Größe verschwindet X" ist belastbar; „genau
-  so sieht die Karte bei jedem Nutzer aus" nicht.
-- Kein Score sagt etwas über Domain-Autorität, Site-Trust oder Publisher-Status — die
-  entscheiden vor jeder Content-Qualität über Discover-Eligibility.
+- **Keine Keyword- oder Themenrecherche.** Die Skills prüfen vorhandene Artikel.
+- **Keine CTR-Prognose.** Kein Score sagt, welche CTR erreicht wird. Zur Einordnung: News-Seiten
+  rund 11 %, Non-News rund 6 %, Arbeitsziel 7–9 %, unter 5 % Handlungssignal *(GSC-Auswertung über
+  11.000 URLs von 62 Domains)*.
+- **Keine Lösung für fehlenden Site-Trust.** Ein Verzeichnis ohne thematische Autorität erkennt das
+  Audit, löst es aber nicht.
+- **Discover ist ein Impuls, keine Basis.** Wer Discover als Grundlast plant, plant falsch.
+- **Evidenzstufen mitführen:** Kriterien sind als [Doku], [Richtlinie], [SDK] oder [Praxis]
+  markiert. SDK-Erkenntnisse sind Client-Sicht zu einem Zeitpunkt — starkes Indiz, keine
+  Spezifikation. Praxis-Heuristiken (News-Sitemap, Startseiten-Prominenz, Article-Schema,
+  Republishing) stehen **nicht** in Googles Doku und dürfen im Kundenbericht nicht als
+  „Google verlangt" auftreten.
 
 ## Aufbau
 
 ```
 .claude-plugin/plugin.json          Plugin-Manifest
 .claude-plugin/marketplace.json     Marketplace-Eintrag
-skills/discover-content-optimizer/
-  SKILL.md                          Ablauf, Grundregeln, Ausgabeformat
-  scripts/textstats.py              Rechen-Backend (stdlib-only)
-  references/module-analysen.md     Module 1–5, Ausgabeverträge, Metrik-Referenz
-  references/scoring.md             Score- und Headline-Rubrik, Anti-Inflation
-  references/domains.md             8 Domain-Profile
-  references/discover-mechanik.md   Begründungsbasis, Headline-Formeln
-  assets/report-template.html       HTML-Einseiter
-skills/discover-headline/
-  SKILL.md                          Ablauf, Zusammenspiel mit den anderen Skills
-  scripts/pctr.py                   Merkmale messen + pCTR rechnen (stdlib-only)
-  references/dimensionen.md         Anker fuer die acht Dimensionen, Modell, Kalibrierung
-  references/formeln.md             Headline-Formeln, Clickbait-Grenze, og:title-Technik
-skills/discover-feedkarte/
-  SKILL.md                          Ablauf, drei Eingabewege, Bewertung an den Ansichten
-  scripts/feedcard.py               Mess- und Render-Backend (braucht Pillow)
-  references/kartenrubrik.md        Feed-Karten-Rubrik, Deckel, Bänder
-examples/                           zwei vollständige Beispielberichte
+skills/discover-gesamtaudit/        Orchestrierung über alle Ebenen
+skills/google-discover-audit/       + references/discover-mechanik.md
+skills/discover-artikel-optimierer/ + references/discover-kriterien.md, external-tools.md
+skills/discover-content-optimizer/  + scripts/textstats.py, 4 references, HTML-Template
+skills/discover-headline/           + scripts/pctr.py, references/dimensionen.md, formeln.md
+skills/discover-feedkarte/          + scripts/feedcard.py, references/kartenrubrik.md
+skills/content-checker/             Textqualität, kanalunabhängig
+examples/                           drei vollständige Beispielberichte
 tests/                              Beispieltexte und Testprotokoll
 ```
-
-## Backends direkt aufrufen
-
-```bash
-python skills/discover-content-optimizer/scripts/textstats.py \
-  --text-file artikel.txt --core "Kernentität A" --entities "Quelle B"
-```
-
-Liefert JSON: Dokumentstatistik, Lesbarkeit (Flesch bzw. Flesch-Amstad), Headline- und
-Lead-Metriken, Faktendichte, thematische Kernbegriffe und TF-IDF-Spitzen, Trust-Marker,
-pro Entität Integrations-Score, Kookkurrenzmatrix.
-
-```bash
-python skills/discover-feedkarte/scripts/feedcard.py \
-  --image https://example.com/titelbild.jpg --out ansichten
-```
-
-Liefert JSON mit Maßen, Seitenverhältnis und Beschnittverlust, Format, Helligkeit, RMS-Kontrast,
-Farbigkeit, Informationsverlust bei Feed-Größe und automatischen Hinweisen — plus die drei
-gerenderten Ansichten im angegebenen Verzeichnis.

@@ -1,7 +1,7 @@
 {
-  "name": "discover-content-optimizer",
-  "description": "Drei Skills fuer Google Discover: Artikeltext semantisch pruefen (Entitaeten, Schema, Keywords), Headline mit pCTR-Modell bewerten (acht Dimensionen, Clickbait-Abzug, Variantenvergleich) und die Feed-Karte beurteilen (Titelbild bei echter Kartengroesse, Bild-Headline-Zusammenspiel). Alle drei mit kalibriertem Score 0-100 und Massnahmenplan.",
-  "version": "1.2.0",
+  "name": "seo-skillset",
+  "description": "Sieben Skills fuer Google Discover und Content-Qualitaet: Gesamtaudit als Orchestrierung, Domain-Audit, URL-Technik, Artikeltext, Headline mit pCTR-Modell, Titelbild bei echter Feed-Kartengroesse und ein kanalunabhaengiger Content-Checker. Mit dokumentierten Rubriken, Rechen-Backends und Belegpflicht.",
+  "version": "2.0.0",
   "author": {
     "name": "David Wulf Growth Consulting",
     "email": "wulf@homeandsmart.de"
@@ -9,13 +9,16 @@
   "keywords": [
     "clickbait",
     "content-analyse",
+    "content-qualitaet",
     "ctr",
+    "discover-audit",
     "entitaeten",
     "feed-karte",
     "google-discover",
     "headline",
     "og-title",
     "pctr",
+    "publisher",
     "schema-org",
     "semantic-seo",
     "seo",

@@ -6,9 +6,9 @@
   },
   "plugins": [
     {
-      "name": "discover-content-optimizer",
+      "name": "seo-skillset",
       "source": "./",
-      "description": "Drei Skills fuer Google Discover. discover-content-optimizer analysiert den Artikeltext: Entitaeten-Abdeckung und -Integration, JSON-LD samt Validierung, Keyword- und Themenfokus, fehlende semantische Konzepte. discover-headline bewertet den og:title mit einem pCTR-Modell aus acht gewichteten Dimensionen plus Clickbait-Abzug und vergleicht bis zu fuenf Varianten gegen das Original. discover-feedkarte beurteilt das Titelbild dort, wo es wirkt: gerendert auf 340 x 190 und 80 x 80. Jeweils mit Score 0-100 und priorisiertem Massnahmenplan."
+      "description": "Sieben Skills fuer Google Discover und Content-Qualitaet. discover-gesamtaudit orchestriert die vollstaendige Pruefung ueber alle Ebenen. Darunter: google-discover-audit (Domain, Zulassung, Traffic nach Verzeichnis), discover-artikel-optimierer (URL-Technik), discover-content-optimizer (Artikeltext, Entitaeten), discover-headline (og:title mit pCTR-Modell), discover-feedkarte (Titelbild bei echter Kartengroesse) und content-checker (Textqualitaet, kanalunabhaengig)."
     }
   ]
 }
