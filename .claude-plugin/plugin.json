@@ -1,0 +1,17 @@
+{
+  "name": "discover-content-optimizer",
+  "description": "Semantische Tiefenanalyse von Artikeltexten für Google Discover und AI-Sichtbarkeit: Entitäten, Headline-Rubrik, Schema-Markup, Keywords, semantische Abdeckung — mit Discover Content Score 0–100 und Maßnahmenplan.",
+  "version": "1.0.0",
+  "author": {
+    "name": "David Wulf Growth Consulting",
+    "email": "wulf@homeandsmart.de"
+  },
+  "keywords": [
+    "google-discover",
+    "seo",
+    "content-analyse",
+    "entitaeten",
+    "semantic-seo",
+    "schema-org"
+  ]
+}

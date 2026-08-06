@@ -1,0 +1,3 @@
+tests/out_*.json
+tests/report_*.md
+__pycache__/

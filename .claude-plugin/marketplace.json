@@ -1,0 +1,14 @@
+{
+  "name": "dwgc-seo",
+  "owner": {
+    "name": "David Wulf Growth Consulting",
+    "email": "wulf@homeandsmart.de"
+  },
+  "plugins": [
+    {
+      "name": "discover-content-optimizer",
+      "source": "./",
+      "description": "Analysiert Artikeltexte auf Google-Discover-Tauglichkeit: Entitäten-Abdeckung und -Integration, Headline-Varianten mit kalibrierter Rubrik, JSON-LD-Generierung samt Validierung, Keyword- und Themenfokus, fehlende semantische Konzepte. Liefert Discover Content Score 0–100 und einen priorisierten Maßnahmenplan."
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Discover-Analyse — {{TITEL}}</title>
+<style>
+  :root{
+    --bg:#fbfbf9; --card:#fff; --ink:#1a1a18; --muted:#6b6b64; --line:#e5e3dd;
+    --accent:#1c5d4a; --warn:#8a5a00; --bad:#a3301f; --good:#1c5d4a;
+    --chip:#f2f1ec;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#141513;--card:#1c1e1b;--ink:#eceae4;--muted:#9d9d94;--line:#2e312c;
+          --accent:#6fbfa2;--warn:#d9a441;--bad:#e0705c;--good:#6fbfa2;--chip:#24261f;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:40px 24px 80px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:32px}
+  .kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  h1{font-size:clamp(24px,4vw,34px);line-height:1.2;margin:.3em 0 .4em}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chip{background:var(--chip);border:1px solid var(--line);border-radius:99px;
+        padding:3px 11px;font-size:13px;color:var(--muted)}
+  .scorebox{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+            background:var(--card);border:1px solid var(--line);border-radius:14px;
+            padding:22px 24px;margin:0 0 28px}
+  .score{font-size:52px;font-weight:700;line-height:1;letter-spacing:-.02em}
+  .score small{font-size:20px;font-weight:400;color:var(--muted)}
+  .band{font-weight:600}
+  .verdict{margin:0;color:var(--muted);flex:1 1 320px;min-width:260px}
+  h2{font-size:20px;margin:38px 0 12px;padding-top:14px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:24px 0 8px}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:12px 0}
+  .scroll{overflow-x:auto}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .bar{height:6px;background:var(--chip);border-radius:99px;overflow:hidden;min-width:70px}
+  .bar > i{display:block;height:100%;background:var(--accent)}
+  .g{color:var(--good);font-weight:600}.y{color:var(--warn);font-weight:600}.r{color:var(--bad);font-weight:600}
+  .action{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+          border-radius:0 10px 10px 0;padding:16px 18px;margin:12px 0}
+  .action h4{margin:0 0 6px;font-size:15.5px}
+  .action .cost{font-size:13px;color:var(--muted);margin-top:8px}
+  blockquote{margin:10px 0;padding:8px 0 8px 14px;border-left:2px solid var(--line);
+             color:var(--muted);font-style:italic}
+  pre{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;
+      overflow-x:auto;font-size:13px;line-height:1.5}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .note{font-size:13.5px;color:var(--muted);background:var(--card);border:1px dashed var(--line);
+        border-radius:10px;padding:14px 16px;margin-top:28px}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);
+         font-size:13px;color:var(--muted)}
+  @media print{body{background:#fff}.wrap{padding:0}h2{break-after:avoid}.action{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Google-Discover-Analyse</div>
+  <h1>{{TITEL}}</h1>
+  <div class="meta">
+    <span class="chip">Domain-Profil: {{DOMAIN}}</span>
+    <span class="chip">Sprache: {{SPRACHE}}</span>
+    <span class="chip">{{WORTZAHL}} Wörter</span>
+    <span class="chip">Analyse: {{DATUM}}</span>
+  </div>
+</header>
+
+<div class="scorebox">
+  <div>
+    <div class="score">{{SCORE}}<small>/100</small></div>
+    <div class="band {{BAND_CLASS}}">{{BAND}}</div>
+  </div>
+  <p class="verdict">{{URTEIL}}</p>
+</div>
+
+<h2>Bewertung im Detail</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Dimension</th><th class="num">Punkte</th><th style="width:110px">Anteil</th><th>Befund</th></tr></thead>
+  <tbody>
+    <!-- Pro Dimension eine Zeile. Balkenbreite = Punkte/Maximum in Prozent. -->
+    <tr><td>Entitäten-Abdeckung und -Tiefe</td><td class="num">{{D1}} / 25</td>
+        <td><span class="bar"><i style="width:{{D1_PCT}}%"></i></span></td><td>{{D1_BEFUND}}</td></tr>
+    <tr><td>Headline und Einstieg</td><td class="num">{{D2}} / 20</td>
+        <td><span class="bar"><i style="width:{{D2_PCT}}%"></i></span></td><td>{{D2_BEFUND}}</td></tr>
+    <tr><td>Semantische Vollständigkeit</td><td class="num">{{D3}} / 20</td>
+        <td><span class="bar"><i style="width:{{D3_PCT}}%"></i></span></td><td>{{D3_BEFUND}}</td></tr>
+    <tr><td>Struktur und Lesbarkeit</td><td class="num">{{D4}} / 15</td>
+        <td><span class="bar"><i style="width:{{D4_PCT}}%"></i></span></td><td>{{D4_BEFUND}}</td></tr>
+    <tr><td>Vertrauen und Maschinenlesbarkeit</td><td class="num">{{D5}} / 20</td>
+        <td><span class="bar"><i style="width:{{D5_PCT}}%"></i></span></td><td>{{D5_BEFUND}}</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Die drei wirksamsten Maßnahmen</h2>
+<!-- Pro Maßnahme ein .action-Block. Aufwand in Minuten, Wirkung in Score-Punkten. -->
+<div class="action">
+  <h4>1. {{M1_TITEL}}</h4>
+  <div>{{M1_TEXT}}</div>
+  <div class="cost">Aufwand: {{M1_AUFWAND}} · Score-Wirkung: {{M1_WIRKUNG}}</div>
+</div>
+<div class="action">
+  <h4>2. {{M2_TITEL}}</h4>
+  <div>{{M2_TEXT}}</div>
+  <div class="cost">Aufwand: {{M2_AUFWAND}} · Score-Wirkung: {{M2_WIRKUNG}}</div>
+</div>
+<div class="action">
+  <h4>3. {{M3_TITEL}}</h4>
+  <div>{{M3_TEXT}}</div>
+  <div class="cost">Aufwand: {{M3_AUFWAND}} · Score-Wirkung: {{M3_WIRKUNG}}</div>
+</div>
+<p><strong>Erreichbarer Score nach Umsetzung: {{SCORE_ZIEL}} / 100</strong></p>
+
+<h2>Headline</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Variante</th><th class="num">Zeichen</th><th class="num">Score</th><th>Formel</th></tr></thead>
+  <tbody>{{HEADLINE_ZEILEN}}</tbody>
+</table>
+</div>
+<p>{{HEADLINE_FAZIT}}</p>
+
+<h2>Entitäten</h2>
+<h3>Fehlende Entitäten</h3>
+<div class="scroll">
+<table>
+  <thead><tr><th>Entität</th><th>Typ</th><th>Priorität</th><th>Warum relevant</th><th>Einbau</th></tr></thead>
+  <tbody>{{FEHLENDE_ENTITAETEN}}</tbody>
+</table>
+</div>
+
+<h3>Integration im Text</h3>
+<div class="scroll">
+<table>
+  <thead><tr><th>Entität</th><th class="num">Nennungen</th><th class="num">Score</th><th>Band</th><th>Befund</th></tr></thead>
+  <tbody>{{ENTITAETEN_INTEGRATION}}</tbody>
+</table>
+</div>
+
+<h2>Fehlende semantische Konzepte</h2>
+<div class="scroll">
+<table>
+  <thead><tr><th>Konzept</th><th class="num">Relevanz</th><th>Unbeantwortete Nutzerfrage</th><th>Umsetzung</th></tr></thead>
+  <tbody>{{KONZEPTE}}</tbody>
+</table>
+</div>
+
+<h2>Textbausteine zum Einsetzen</h2>
+{{TEXTBAUSTEINE}}
+
+<h2>Keywords</h2>
+{{KEYWORDS}}
+
+<h2>Strukturierte Daten</h2>
+<pre><code>{{JSONLD}}</code></pre>
+<p>{{JSONLD_HINWEISE}}</p>
+
+<div class="note">
+  <strong>Methodik.</strong> {{METHODIK}}
+</div>
+
+<footer>{{FUSSZEILE}}</footer>
+
+</div>
+</body>
+</html>

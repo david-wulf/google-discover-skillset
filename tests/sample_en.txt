@@ -1,0 +1,16 @@
+Apple's M5 MacBook Pro Is the First Real Reason to Upgrade Since 2021
+
+I have used the same 14-inch MacBook Pro for four years. Last week Apple gave me a reason to finally replace it.
+
+Apple announced the M5 MacBook Pro on Wednesday, and the numbers are unusual. The company claims 4x faster AI compute than M4 thanks to a redesigned Neural Accelerator sitting inside every GPU core. In my two days of testing, a 7B parameter local model generated tokens roughly 3.2x faster than on my M4 Pro machine.
+
+What actually changed
+The M5 chip moves to a third-generation 3nm process. Apple says single-thread CPU performance is up 15 percent, and GPU graphics performance up 45 percent. Memory bandwidth jumps to 153 GB/s, a 28 percent increase.
+
+Battery life stays at 24 hours for video playback. Price starts at 1,599 dollars for the 14-inch model with 16GB unified memory, which is the same price as the M4 launch price last year.
+
+Why this matters for people who edit video
+Final Cut Pro exports of a 10-minute 4K ProRes timeline finished in 2 minutes 11 seconds on the M5, against 3 minutes 40 seconds on the M4. That is the kind of gap that changes a working day.
+
+Should you upgrade?
+If you bought an M4 machine last year, no. If you are still on M1 or Intel, this is the clearest jump in four years. Apple starts shipping on October 22.
