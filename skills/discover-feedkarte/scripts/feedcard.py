@@ -21,6 +21,8 @@ import json
 import math
 import os
 import sys
+import time
+import urllib.error
 import urllib.request
 from fractions import Fraction
 
@@ -37,7 +39,17 @@ except ImportError:
 # Karten, keine von Google dokumentierten Spezifikationen.
 FEED_CARD = (340, 190)      # grosse Karte im Feed
 COMPACT_SQUARE = (80, 80)   # kompakte Listenansicht
-MIN_WIDTH = 1200            # Mindestbreite fuer die grosse Karte
+
+# Harte Spezifikation aus der Google-Discover-Dokumentation:
+# mindestens 1200 px Breite, insgesamt mehr als 300.000 Pixel, 16:9.
+# Googles eigenes Beispiel ist 1280 x 720 = 921.600 px.
+MIN_WIDTH = 1200
+MIN_AREA = 300_000
+
+# Formate: Google raet von generischen und textlastigen Bildern ab; die
+# Formatvorgabe webp/jpg (kein PNG) ist Praxisstandard, nicht Google-Doku.
+PREFERRED_FORMATS = {"WEBP", "AVIF"}
+ACCEPTED_FORMATS = {"JPEG", "JPG", "MPO"}
 
 COMMON_RATIOS = {
     "16:9": 16 / 9, "4:3": 4 / 3, "3:2": 3 / 2, "1:1": 1.0,
@@ -46,19 +58,50 @@ COMMON_RATIOS = {
 
 
 def fetch(src, out_dir):
-    """Laedt eine URL herunter oder gibt einen lokalen Pfad zurueck."""
+    """Laedt eine URL herunter oder gibt einen lokalen Pfad zurueck.
+
+    Bei einer URL werden zusaetzlich Auslieferungsmerkmale erfasst. Drei der
+    fuenf im Google-App-SDK nachweisbaren Bild-Ranking-Signale betreffen nicht
+    das Motiv, sondern die Zustellung: Bildmasse, Download-Erfolg
+    (EMBER_FEED_THUMBNAILS_DOWNLOADED) und Fehlerrate
+    (image_load_failure_count). Eine nicht oder langsam abrufbare Bild-URL
+    kostet deshalb Sichtbarkeit, unabhaengig vom Motiv.
+    """
     if not src.lower().startswith(("http://", "https://")):
         if not os.path.isfile(src):
             raise SystemExit("Bilddatei nicht gefunden: %s" % src)
-        return src, None
+        return src, None, None
     name = os.path.basename(src.split("?")[0]) or "titelbild"
     if "." not in name:
         name += ".img"
     target = os.path.join(out_dir, "original_" + name)
     req = urllib.request.Request(src, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=30) as resp, open(target, "wb") as fh:
-        fh.write(resp.read())
-    return target, src
+    start = time.perf_counter()
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        data = resp.read()
+        final_url = resp.geturl()
+        status = resp.status
+        ctype = resp.headers.get("Content-Type", "")
+        cache = resp.headers.get("Cache-Control", "")
+    elapsed_ms = round((time.perf_counter() - start) * 1000, 1)
+    with open(target, "wb") as fh:
+        fh.write(data)
+
+    delivery = {
+        "http_status": status,
+        "reachable_anonymously": True,
+        "https": final_url.lower().startswith("https://"),
+        "redirected": final_url != src,
+        "final_url": final_url if final_url != src else None,
+        "content_type": ctype,
+        "content_type_is_image": ctype.lower().startswith("image/"),
+        "cache_control": cache or None,
+        "download_ms": elapsed_ms,
+        "download_reading": ("schnell" if elapsed_ms < 400 else
+                             "brauchbar" if elapsed_ms < 1000 else
+                             "langsam — Download-Erfolg ist ein Ranking-Signal"),
+    }
+    return target, src, delivery
 
 
 def closest_ratio(w, h):
@@ -176,7 +219,7 @@ def luminance_stats(im):
 
 def analyse(src, out_dir):
     os.makedirs(out_dir, exist_ok=True)
-    path, source_url = fetch(src, out_dir)
+    path, source_url, delivery = fetch(src, out_dir)
     filesize = os.path.getsize(path)
 
     with Image.open(path) as raw:
@@ -213,12 +256,29 @@ def analyse(src, out_dir):
                 "bytes": filesize,
                 "kilobytes": round(filesize / 1024, 1),
             },
+            "delivery": delivery,
+            "google_spec": {
+                "min_width_1200": w >= MIN_WIDTH,
+                "min_area_300k": w * h > MIN_AREA,
+                "aspect_16_9": abs((w / h) - 16 / 9) / (16 / 9) <= 0.03,
+                "format_accepted": fmt and fmt.upper() in (PREFERRED_FORMATS | ACCEPTED_FORMATS),
+                "all_met": (w >= MIN_WIDTH and w * h > MIN_AREA
+                            and abs((w / h) - 16 / 9) / (16 / 9) <= 0.03
+                            and bool(fmt) and fmt.upper() in (PREFERRED_FORMATS | ACCEPTED_FORMATS)),
+            },
             "dimensions": {
                 "width": w,
                 "height": h,
+                "total_pixels": w * h,
                 "megapixels": round(w * h / 1e6, 2),
                 "meets_min_width_1200": w >= MIN_WIDTH,
                 "width_shortfall": max(0, MIN_WIDTH - w),
+                "meets_min_area_300k": w * h > MIN_AREA,
+                "area_shortfall": max(0, MIN_AREA - w * h),
+                # Googles Beispielbild ist 1280 x 720. Wer knapp ueber der
+                # Mindestbreite liegt, riskiert den SDK-Negativmarker
+                # LOW_QUALITY_IMAGE — Empfehlung ist deutlich darueber.
+                "comfortably_above_min_width": w >= 1600,
                 "aspect_ratio": closest_ratio(w, h),
             },
             "crop_loss_16x9": {
@@ -239,19 +299,60 @@ def analyse(src, out_dir):
     # die Messwerte im Bericht zitierfaehig.
     flags = []
     d = result["dimensions"]
+
+    # --- Harte Google-Spezifikation (Google-Doku, nicht verhandelbar) ---
     if not d["meets_min_width_1200"]:
-        flags.append("Breite %d px unter 1200 px — grosse Feed-Karte "
-                     "entfaellt (fehlen %d px)" % (d["width"], d["width_shortfall"]))
-    if d["aspect_ratio"]["closest"] != "16:9" and \
-            d["aspect_ratio"]["deviation_pct"] > 8:
-        flags.append("Seitenverhaeltnis %s weicht von 16:9 ab — beim Beschnitt "
-                     "gehen %.1f %% der Flaeche %s verloren"
+        flags.append("SPEC: Breite %d px unter der Google-Mindestbreite von "
+                     "1200 px (fehlen %d px) — grosse Feed-Karte entfaellt"
+                     % (d["width"], d["width_shortfall"]))
+    if not d["meets_min_area_300k"]:
+        flags.append("SPEC: Gesamtflaeche %d px unter der Google-Mindestflaeche "
+                     "von 300.000 px (fehlen %d px)"
+                     % (d["total_pixels"], d["area_shortfall"]))
+    if d["aspect_ratio"]["closest"] != "16:9" or d["aspect_ratio"]["deviation_pct"] > 3:
+        flags.append("SPEC: Seitenverhaeltnis %s statt 16:9 — beim Beschnitt "
+                     "gehen %.1f %% der Flaeche %s verloren. Google verlangt, "
+                     "dass die wichtigen Details im beschnittenen Ausschnitt "
+                     "erhalten bleiben: an der Kartenansicht pruefen"
                      % (d["aspect_ratio"]["exact"],
                         result["crop_loss_16x9"]["cropped_pixels_pct"],
                         result["crop_loss_16x9"]["cropped_edge"]))
-    if result["file"]["format"] == "PNG" and result["file"]["kilobytes"] > 300:
-        flags.append("PNG mit %.0f KB — als WebP oder JPEG deutlich kleiner, "
-                     "ohne sichtbaren Verlust" % result["file"]["kilobytes"])
+    fmt = (result["file"]["format"] or "").upper()
+    if fmt == "PNG":
+        flags.append("Format PNG — Empfehlung ist webp oder jpg. PNG bringt fuer "
+                     "ein Fotomotiv keinen Vorteil und kostet Ladezeit (%.0f KB)"
+                     % result["file"]["kilobytes"])
+    elif fmt and fmt not in (PREFERRED_FORMATS | ACCEPTED_FORMATS):
+        flags.append("Format %s ist fuer ein Titelbild unuebliches Material — "
+                     "webp oder jpg verwenden" % fmt)
+
+    # --- Grenzfall-Warnung aus dem SDK-Negativmarker LOW_QUALITY_IMAGE ---
+    if d["meets_min_width_1200"] and not d["comfortably_above_min_width"]:
+        flags.append("Breite %d px erfuellt die Spezifikation, liegt aber nur "
+                     "knapp darueber. Das SDK kennt einen ausdruecklichen "
+                     "Negativmarker LOW_QUALITY_IMAGE — bei Grenzfaellen "
+                     "deutlich ueber die Mindestmasse gehen, ab 1600 px"
+                     % d["width"])
+
+    # --- Auslieferung: drei der fuenf SDK-Bildsignale ---
+    dl = result.get("delivery")
+    if dl:
+        if not dl["https"]:
+            flags.append("AUSLIEFERUNG: Bild-URL laeuft nicht ueber HTTPS — "
+                         "og:image:secure_url wird bevorzugt")
+        if not dl["content_type_is_image"]:
+            flags.append("AUSLIEFERUNG: Content-Type ist '%s' statt image/* — "
+                         "kann den Thumbnail-Download scheitern lassen"
+                         % dl["content_type"])
+        if dl["redirected"]:
+            flags.append("AUSLIEFERUNG: Bild-URL leitet weiter auf %s — in "
+                         "og:image die Ziel-URL direkt angeben"
+                         % dl["final_url"])
+        if dl["download_ms"] >= 1000:
+            flags.append("AUSLIEFERUNG: Download dauerte %.0f ms. Download-Erfolg "
+                         "und Fehlerrate sind eigene Ranking-Signale "
+                         "(EMBER_FEED_THUMBNAILS_DOWNLOADED, "
+                         "image_load_failure_count)" % dl["download_ms"])
     if result["luminance"]["rms_contrast"] < 40:
         flags.append("RMS-Kontrast %.1f ist niedrig — flaue Bilder verlieren im "
                      "Feed gegen kontraststarke Nachbarkarten"

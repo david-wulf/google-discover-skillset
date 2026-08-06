@@ -37,9 +37,41 @@ Das Bild wird auf die echten Kartenmaße gerendert und **in dieser Größe anges
 3. **Belegpflicht.** Jeder Befund benennt, was in welcher Ansicht sichtbar oder verschwunden ist.
    „Bild zu unruhig" ist kein Befund. „In der 80 × 80-Ansicht sind Logo und Markenname
    weggeschnitten, lesbar bleibt nur ‚000 WATT'" ist einer.
-4. **Karte, nicht Bild.** Bild und Headline werden gemeinsam bewertet. Ein Bild, das die Headline
-   wortwörtlich wiederholt, verschenkt die Hälfte der Fläche.
-5. **Keine erfundenen Maße.** Bildbreite, Format und Dateigröße kommen aus dem Skript.
+4. **Karte, nicht Bild.** Bild und Headline werden gemeinsam bewertet. Ein Bild, das den
+   `og:title` wiederholt, verschenkt eine der zwei Flächen der Karte.
+5. **Keine erfundenen Maße.** Bildbreite, Fläche, Format, Dateigröße und Auslieferung kommen aus
+   dem Skript.
+6. **Evidenzstufe mitführen.** Jedes Kriterium ist als **[Doku]**, **[SDK]**, **[Richtlinie]** oder
+   **[Praxis]** markiert (`references/kartenrubrik.md`). Im Bericht wird die Stufe genannt: eine
+   Spezifikation aus der Google-Doku ist nicht verhandelbar, eine SDK-Erkenntnis ist ein starkes
+   Indiz aus Client-Sicht, eine Praxis-Heuristik braucht eine Begründung. Nie eine
+   Praxis-Empfehlung als „Google verlangt" verkaufen — und SDK-Zahlen nicht als Spezifikation
+   zitieren.
+
+## Die harte Spezifikation
+
+Diese vier Punkte sind Zulassungsbedingung, kein Feinschliff **[Doku]**:
+
+| Anforderung | Prüfung |
+|-------------|---------|
+| **≥ 1200 px Breite** | `dimensions.meets_min_width_1200` |
+| **> 300.000 px Gesamtfläche** | `dimensions.meets_min_area_300k` — eigenständig, nicht von der Breite abgedeckt |
+| **16:9** | `dimensions.aspect_ratio` |
+| **Wichtige Details bleiben im beschnittenen Ausschnitt erhalten** | nur visuell prüfbar, an `ansicht_crop_16zu9.png` |
+| **`max-image-preview:large`** im robots-Meta oder AMP | der einzige harte technische Blocker der ganzen Doku |
+
+`google_spec.all_met` im Skript-Output fasst die messbaren drei zusammen. Ist der Wert `false`,
+greift der Score-Deckel bei 55 — vor jeder inhaltlichen Diskussion.
+
+Ausdrücklich untauglich laut Doku: das **Websitelogo** und generische Motive. Ebenso „Bilder mit
+viel Text" — gemeint sind vollgeschriebene Grafiken, **nicht** ein kurzer Schriftzug aus drei bis
+fünf Wörtern. Der ist Teil der Thumbnail-Formel und wird in K2 belohnt.
+
+Ohne abrufbares Thumbnail entsteht laut SDK **keine Karte**, es gibt keinen Textfallback **[SDK]**.
+Die Bildquelle läuft über eine fünfstufige Fallback-Kette (`og:image` → `twitter:image` →
+`og:image:secure_url` → `twitter:image:src` → generisches `image`), wobei **Schema.org-JSON-LD
+Vorrang vor allen OG-Tags hat**. Nennen mehrere Quellen unterschiedliche Motive, wählt Google —
+und nicht zwingend das gute Bild. Abweichungen deshalb immer im Bericht benennen.
 
 ## Ablauf
 
@@ -69,15 +101,29 @@ JavaScript-Schnipsel für den URL-Weg:
 JSON.stringify({
   ogTitle: document.querySelector('meta[property="og:title"]')?.content,
   ogImage: document.querySelector('meta[property="og:image"]')?.content,
+  ogImageSecure: document.querySelector('meta[property="og:image:secure_url"]')?.content,
   ogImageW: document.querySelector('meta[property="og:image:width"]')?.content,
   ogImageH: document.querySelector('meta[property="og:image:height"]')?.content,
+  ogImageAlt: document.querySelector('meta[property="og:image:alt"]')?.content,
+  twitterImage: document.querySelector('meta[name="twitter:image"]')?.content,
   robots: document.querySelector('meta[name="robots"]')?.content,
   siteName: document.querySelector('meta[property="og:site_name"]')?.content,
+  locale: document.querySelector('meta[property="og:locale"]')?.content,
   heroSrcset: document.querySelector('article img, .entry-content img, .post-thumbnail img')?.srcset,
   jsonldImage: [...document.querySelectorAll('script[type="application/ld+json"]')]
-    .map(s => s.textContent).join('\n').match(/"image"[\s\S]{0,300}/)?.[0]
+    .map(s => s.textContent).join('\n').match(/"(?:image|primaryImageOfPage)"[\s\S]{0,300}/g)
 })
 ```
+
+Aus diesem Satz drei Dinge ableiten, bevor gemessen wird:
+
+1. **Welche Variante ist die größte?** Im `srcset` steckt oft eine breitere Fassung als im
+   `og:image`. Gemessen wird die größte verfügbare; beide Werte im Bericht nennen, wenn sie
+   abweichen — denn Discover nimmt die deklarierte, nicht die vorhandene.
+2. **Nennen alle Quellen dasselbe Motiv?** `og:image`, `twitter:image`, JSON-LD-`image` und
+   `primaryImageOfPage` vergleichen. JSON-LD gewinnt bei Konflikt **[SDK]**.
+3. **Sind `og:image:width`/`:height` gesetzt?** Fehlen sie, riskiert man Fehl-Skalierung und
+   falschen Zuschnitt. Kein Punktabzug, aber eine Zeile im Bericht.
 
 ### Schritt 1 — Messen und rendern
 
@@ -112,6 +158,19 @@ nicht schätzen.
 - Wirkt es wie ein generisches Stockfoto oder wie eine spezifische Aufnahme zu diesem Thema?
 
 Dann das Original ansehen und vergleichen: Was ging verloren, und war es tragend?
+
+**Die Thumbnail-Formel abhaken** — Gesicht, Schriftzug, Beweis-Element. Sie wirken nur zusammen,
+deshalb wird jede Komponente einzeln festgestellt und nicht im Gesamteindruck verrechnet:
+
+| Komponente | Konkret zu prüfen |
+|------------|-------------------|
+| **Gesicht** | Ist es die **eigene** Person (Autor, Experte) oder ein Model? Blick in die Kamera oder auf das gezeigte Objekt — oder ins Leere? Haltung passend zur Aussage oder Grimasse? Augen in der Kartengröße noch erkennbar? |
+| **Schriftzug** | Wörter zählen — 3 bis 5 ist die Erfassbarkeitsgrenze. Behauptung oder Frage, oder nur eine Beschreibung? Ist **ein** Wort hervorgehoben (Farbfläche, Unterstreichung, Farbwechsel)? |
+| **Beweis-Element** | Gibt es einen sichtbaren Beleg für die Behauptung: Screenshot, UI-Ausschnitt, Produkt, Tool-Logos, eine Zahl als Badge? Bei abstraktem Thema: ersetzt eine sprechende Geste das Objekt? |
+
+Zusätzlich die **Bildordnung**: klare Zweiteilung (etwa halbe Fläche Gesicht, halbe Text) oder
+liegt der Text über dem Gesicht? Bewährte Muster sind Gesicht rechts / Text links mit einem farbig
+hinterlegten Wort, oder Gesicht links / UI-Screenshot rechts mit Zahlen-Badge.
 
 ### Schritt 3 — Bewerten
 
@@ -151,13 +210,36 @@ ungefragt erzeugen.
 Überschneidung ist gewollt bei `max-image-preview:large` und der Bildbreite — beide Skills
 prüfen das, weil beide es brauchen. Die Bildwirkung prüft nur dieser Skill.
 
+## Herkunft der Kriterien
+
+Die Rubrik trennt vier Evidenzstufen, weil sie unterschiedlich verbindlich sind:
+
+- **[Doku]** — Googles Discover-Dokumentation: Mindestbreite 1200 px, Gesamtfläche über
+  300.000 px, 16:9, Detailerhalt beim Zuschnitt, `max-image-preview:large`, Websitelogo und
+  generische Motive untauglich.
+- **[Richtlinie]** — Discover-Inhaltsrichtlinien: Werbeanteil darf den Anteil der
+  Nachrichteninhalte nicht überschreiten, gesponserte Inhalte deutlich kennzeichnen, keine
+  Vorschauinhalte mit vorgetäuschten Details, Transparenz über Autor und Datum.
+- **[SDK]** — Reverse Engineering des Google-App-SDK (Metehan Yeşilyurt): `LOW_QUALITY_IMAGE` als
+  Negativmarker, `EMBER_FEED_THUMBNAILS_DOWNLOADED` und `image_load_failure_count` als eigene
+  Signale, JSON-LD vor OG-Tags, historische CTR pro URL. **Client-Sicht zu einem Zeitpunkt** — der
+  Autor hat frühere Behauptungen selbst korrigiert. Als starkes Indiz führen, nie als Spezifikation
+  zitieren.
+- **[Praxis]** — Thumbnail-Formel Gesicht + 3–5 Wörter + Beweis-Element, Zweiteilung der Fläche,
+  Formatwahl webp/jpg, Schriftzug ≠ `og:title`. Bewährt, aber ohne Google-Beleg.
+
 ## Grenzen
 
 - Die Kartenmaße 340 × 190 und 80 × 80 sind Größenordnungen der ausgelieferten Karten, keine von
   Google dokumentierten Spezifikationen. Die Aussage „bei dieser Größe verschwindet X" ist
   belastbar; „genau so sieht die Karte bei jedem Nutzer aus" nicht.
 - Der Score ist kein CTR-Wert. Er misst, ob die Karte die bekannten Schwächen vermeidet.
-- Ob Google überhaupt dieses Bild wählt, entscheidet die Fallback-Kette aus `og:image`,
-  JSON-LD-`image` und Seitenbild. Weichen die Quellen ab, wird das im Bericht benannt — welche
-  Variante Google nimmt, ist von außen nicht feststellbar.
+  Zur Einordnung der Zielgröße: Discover-CTR liegt bei News-Seiten um 11 %, bei Non-News um 6 %;
+  Arbeitsziel 7–9 %, unter 5 % ist ein Handlungssignal. Diese Werte sind **nicht** aus dem Score
+  ableitbar und dürfen nicht als Prognose ausgegeben werden.
+- Ob Google überhaupt dieses Bild wählt, entscheidet die Fallback-Kette. Weichen die Quellen ab,
+  wird das im Bericht benannt — welche Variante Google nimmt, ist von außen nicht feststellbar.
 - Gesichtserkennung findet nicht automatisiert statt. Menschliche Präsenz wird visuell beurteilt.
+- Bei einer bereits ausgespielten URL mit schwacher Historie ist die Wirkung eines Bildwechsels
+  begrenzt: die CTR-Historie hängt an der URL **[SDK]**. Das gehört in die Empfehlung, nicht in den
+  Score.

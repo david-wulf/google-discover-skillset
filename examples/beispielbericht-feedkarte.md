@@ -9,19 +9,29 @@ und am Zusammenspiel mit der Headline verlieren kann.
 BALKONKRAFTWERK", Störer „TOP DEAL! KLEINER PREIS", Logo „kleines kraftwerk" oben links,
 Markenblock „ANKER SOLIX SOLARBANK 3" oben rechts · **Analyse:** 2026-08-06
 
-## Feed-Karten-Score: 64 / 100 — Mittel
+## Feed-Karten-Score: 65 / 100 — Mittel
 
-Technisch ist die Karte tadellos, sie verliert aber an drei Stellen: das Bild zeigt Module,
-während der Artikel vom Speicher handelt; der quadratische Beschnitt zerstört Logo und
-Markenblock vollständig; und Bild und Headline sagen dreimal dasselbe. Der größte Hebel ist
-kostenlos — ein anderer Ausschnitt und eine Headline, die einen anderen Fakt trägt als das Bild.
-Aufwand: rund 20 Minuten, kein neues Bildmaterial nötig.
+Die Google-Spezifikation ist vollständig erfüllt und die Auslieferung einwandfrei — die Karte
+verliert ausschließlich am Motiv und an der Textabstimmung. Drei Stellen: kein Mensch im Bild, das
+Bild zeigt Module während der Artikel vom Speicher handelt, und Bild und Headline sagen dreimal
+dasselbe. Die beiden kostenlosen Hebel — anderer Ausschnitt, andere Headline — kosten 20 Minuten.
+
+**Spezifikationskonformität [Doku]**
+
+| Anforderung | Wert | Status |
+|---|---|---|
+| ≥ 1200 px Breite | 1600 px | ✅ komfortabel darüber |
+| > 300.000 px Gesamtfläche | 1.440.000 px | ✅ |
+| 16:9 | exakt, Abweichung 0,0 % | ✅ |
+| Details bleiben im Beschnitt erhalten | kein Beschnitt nötig | ✅ |
+| `max-image-preview:large` | `<meta name='robots' content='index, follow, max-image-preview:large, …'>` | ✅ |
+| Auslieferung [SDK] | HTTPS, `image/jpeg`, keine Weiterleitung, 136 ms | ✅ |
 
 | Dimension | Punkte | Befund |
 |-----------|-------:|--------|
-| K1 Technische Auslieferbarkeit | 24 / 25 | 1600 px, exakt 16:9, `max-image-preview:large` gesetzt — nur das Format ließe sich verbessern |
-| K2 Bildaussage | 14 / 30 | Gezeigt werden Module, Artikelgegenstand ist der 2-kWh-Speicher; keine menschliche Präsenz |
-| K3 Tauglichkeit bei Kartengröße | 16 / 25 | Große Karte trägt; die 80 × 80-Ansicht zerstört Logo und Marke |
+| K1 Technische Auslieferbarkeit | 24 / 25 | Spezifikation vollständig erfüllt, 1600 px komfortabel über der Schwelle; nur JPEG statt WebP |
+| K2 Bildaussage | 13 / 30 | Kein Gesicht (0 von 8), Schriftzug ist Spezifikation statt Behauptung, Artikelgegenstand nicht gezeigt |
+| K3 Tauglichkeit bei Kartengröße | 18 / 25 | Große Karte trägt vollständig; die 80 × 80-Ansicht zerstört Logo und Marke |
 | K4 Zusammenspiel mit der Headline | 10 / 20 | Dreifache Doppelung, Fremdmarken dominieren die Fläche |
 
 ## Was in welcher Größe verschwindet
@@ -74,7 +84,7 @@ bei Nutzern, die eine Einordnung erwarten und eine Werbefläche bekommen.
 ## Maßnahmen
 
 **1. Ausschnitt umbauen: Tragendes in das mittlere Quadrat** — 15 Min, aus dem vorhandenen Bild ·
-+4 Punkte (K3 3c: 1 → 5)
++3 Punkte (K3 3d: 1 → 4)
 Logo und Markenblock aus den äußeren Fünfteln in Richtung Bildmitte rücken, sodass der 80 × 80-
 Beschnitt sie nicht verliert. Faustregel für die Bildproduktion: alles, was tragen soll, liegt im
 mittleren Quadrat des 16:9-Rahmens.
@@ -85,28 +95,32 @@ den Fakt tragen, den das Bild nicht hat — den Speicher und seine Zahl. Vorschl
 „2 kWh Speicher im Test: Anker Solarbank 3 jetzt 300 Euro günstiger" (65 Zeichen, wenn der Preis
 stimmt). Damit trägt die Karte zwei Aussagen statt einer.
 
-**3. Speicher ins Bild holen** — Auftrag, neues Bildmaterial · +6 Punkte (K2 2a: 4 → 10)
-Der Artikel handelt vom 2-kWh-Speicher als Testsieger; gezeigt werden Module. Ein Motiv, in dem
-die Solarbank selbst dominiert, würde die Kern-Entität sichtbar machen. Zweitbeste Lösung ohne
-neues Material: den Markenblock „SOLARBANK 3" so vergrößern, dass er in der Feed-Karte klar
-lesbar ist.
+**3. Schriftzug von der Spezifikation zur Behauptung umbauen** — 20 Min Grafik · +3 Punkte
+(K2 2c: 4 → 7)
+„2.000 WATT BALKONKRAFTWERK" ist eine Datenblattzeile, keine Aussage. Die Formel verlangt eine
+Behauptung oder Frage, und **ein** hervorgehobenes Wort statt zwei konkurrierender Farbbalken.
+Vorschlag: „**300 €** gespart" oder „Lohnt sich das?" — ein Gedanke, ein Akzent.
 
-**Erreichbarer Score: 79 / 100** (Band „Solide") mit Maßnahmen 1 und 2 allein — beide kosten
-zusammen 20 Minuten und kein Bildbudget. Mit Maßnahme 3: 85.
+**Erreichbarer Score: 76 / 100** (Band „Solide") mit den Maßnahmen 1 bis 3. Alle drei kommen ohne
+neues Bildmaterial aus.
 
-Weiteres Potenzial, nicht in den Top 3: menschliche Präsenz (K2 2c steht bei 0 von 6). Eine Person,
-die die Solarbank anschließt, würde sowohl 2a als auch 2c heben — das ist aber ein Shooting, kein
-Ausschnitt.
+**Der große Hebel, der ein Shooting braucht:** K2 2b steht bei **0 von 8** — es ist kein Mensch im
+Bild. Das ist die teuerste Einzellücke der Karte. Ein sichtbarer Mensch macht aus dem Artikel einen
+Absender, zahlt auf E-E-A-T und die Transparenz-Anforderung ein, und Discover bewegt sich Richtung
+Creator- und Absenderlogik. Kombiniert mit dem eigentlichen Artikelgegenstand — eine Person, die die
+Solarbank anschließt — hebt das 2b von 0 auf 8 und 2a von 4 auf 8: **+12 Punkte, Score 88**.
+
+Zweitbeste Lösung ohne Shooting: den Markenblock „SOLARBANK 3" so vergrößern, dass er in der
+Feed-Karte klar lesbar wird — das hebt 2a auf 6 (+2), macht aber aus dem Modulfoto kein Speicherfoto.
 
 ## Technische Fixes
 
 | Punkt | Status | Fix |
 |---|---|---|
-| Breite 1600 px | ✅ | über der 1200-px-Schwelle für die große Karte |
-| Seitenverhältnis 16:9 exakt | ✅ | kein Beschnittverlust |
-| `max-image-preview:large` | ✅ | gesetzt: `<meta name='robots' content='index, follow, max-image-preview:large, …'>` |
-| Format JPEG, 242,5 KB | ⚠️ | als WebP rund 40 % kleiner bei gleicher Qualität — K1 1c: 3 → 4 |
+| Format JPEG, 242,5 KB | ⚠️ | als WebP rund 40 % kleiner bei gleicher Qualität — K1 1d: 2 → 3 |
 | Ausgebrannte Flächen 12,6 % | ⚠️ | unter der 15-%-Schwelle, kein Abzug. Der helle Himmel im oberen Drittel reduziert aber die Abgrenzung gegen einen hellen Feed-Hintergrund |
+| `og:image:width` / `:height` | prüfen | im HTML nicht gefunden. Ohne diese Angaben riskiert man Fehl-Skalierung und falschen Zuschnitt |
+| Bildquellen-Konsistenz | ✅ | `og:image` und Artikelbild nennen dasselbe Motiv. JSON-LD hat bei Konflikt Vorrang **[SDK]** — hier kein Konflikt |
 | RMS-Kontrast 88,0 · Farbigkeit 80,8 | ✅ | deutlich über den Schwellen; die Karte fällt im Feed auf |
 
 ## Methodik

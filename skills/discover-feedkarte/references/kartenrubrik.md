@@ -11,167 +11,252 @@ Messwert aus `feedcard.py` oder einer benannten Beobachtung in einer der gerende
 | K4 Zusammenspiel mit der Headline | 20 |
 
 **Zwischenwerte** sind zulässig, wenn zwei Anker gleichzeitig zutreffen — dann nennt die
-Begründung beide. Beispiel: ein Bild, das drei von vier Headline-Elementen wiederholt, aber einen
-Fakt ergänzt, liegt bei 4a zwischen „wiederholt" (2) und „illustriert ohne zu ergänzen" (5).
-Was nicht zulässig ist: einen Zwischenwert wählen, um eine unangenehme Einordnung zu vermeiden.
+Begründung beide. Was nicht zulässig ist: einen Zwischenwert wählen, um eine unangenehme
+Einordnung zu vermeiden.
+
+## Evidenzstufen — im Bericht mitführen
+
+Die Kriterien haben unterschiedliche Verbindlichkeit. Diese Trennung gehört in den Kundenbericht,
+weil sie darüber entscheidet, was verhandelbar ist:
+
+| Marke | Bedeutung |
+|-------|-----------|
+| **[Doku]** | Google-Discover-Dokumentation. Harte Spezifikation, nicht verhandelbar. |
+| **[SDK]** | Aus dem Reverse Engineering des Google-App-SDK. Starkes Indiz, keine bestätigte Spezifikation — Client-Sicht zu einem Zeitpunkt. Nicht als Google-Vorgabe zitieren. |
+| **[Richtlinie]** | Discover-Inhaltsrichtlinien. Verstöße erscheinen als manuelle Maßnahme in der GSC. |
+| **[Praxis]** | Bewährte Heuristik ohne Google-Beleg. Begründungspflicht beim Kunden, kein „Google verlangt". |
 
 ---
 
 ## K1 — Technische Auslieferbarkeit (25)
 
-**1a Breite (0–10)** — aus `dimensions.width`
+**1a Breite (0–7)** — aus `dimensions.width` · **[Doku]** ≥ 1200 px
 
 | Breite | Punkte |
 |--------|-------:|
-| ≥ 1600 px | 10 |
-| 1200–1599 px | 9 |
-| 1000–1199 px | 4 |
-| 700–999 px | 2 |
-| < 700 px | 0 |
+| ≥ 1600 px | 7 |
+| 1200–1599 px | 5 |
+| 1000–1199 px | 2 |
+| < 1000 px | 0 |
 
-Unter 1200 px zeigt Discover statt der großen Karte nur ein kleines Vorschaubild. Das ist kein
-Schönheitsfehler, sondern der Verlust der Fläche, über die geklickt wird.
+Nur 5 von 7 bei erfüllter Spezifikation ist Absicht: das SDK kennt einen ausdrücklichen
+Negativmarker `LOW_QUALITY_IMAGE` **[SDK]**. Es gibt also nicht nur „gut genug", sondern eine
+benannte Abwertung — bei Grenzfällen deutlich über die Mindestmaße gehen statt knapp darüber.
+Googles eigenes Beispielbild ist 1280 × 720, also selbst ein Grenzfall.
 
-**1b Seitenverhältnis (0–6)** — aus `dimensions.aspect_ratio` und `crop_loss_16x9`
+**1b Gesamtfläche (0–3)** — aus `dimensions.total_pixels` · **[Doku]** > 300.000 px
+- 3 = über 300.000 px
+- 0 = darunter
+
+Eigenständiges Kriterium, nicht durch die Breite abgedeckt: ein 1200 × 200 px Banner erfüllt die
+Breite und fällt trotzdem durch.
+
+**1c Seitenverhältnis und Detailerhalt (0–5)** — **[Doku]** 16:9, und: *beim Zuschnitt müssen die
+wichtigen Details im beschnittenen Ausschnitt erhalten bleiben*
 
 | Zustand | Punkte |
 |---------|-------:|
-| 16:9, Abweichung ≤ 3 % | 6 |
-| Abweichung ≤ 10 %, Beschnittverlust < 10 % der Fläche | 5 |
-| Beschnittverlust 10–20 % ohne Verlust tragender Elemente | 3 |
-| Beschnittverlust > 20 %, oder tragende Elemente fallen weg | 1 |
+| 16:9, Abweichung ≤ 3 % | 5 |
+| Abweichung ≤ 10 %, tragende Elemente überstehen den Beschnitt | 3 |
+| Beschnitt kostet tragende Elemente (an `ansicht_crop_16zu9.png` geprüft) | 1 |
 | Hochformat (Verhältnis < 1,0) | 0 |
 
-**1c Format und Dateigröße (0–4)**
-- 4 = WebP oder AVIF, unter 250 KB
-- 3 = JPEG unter 300 KB
-- 2 = JPEG über 300 KB
-- 1 = PNG (ohne Transparenzbedarf) oder über 600 KB
-- 0 = animiertes Format, oder über 1,5 MB
+Der Detailerhalt ist damit **Spezifikationskonformität, nicht Feinschliff** — der einzige Weg ihn
+zu prüfen ist der Blick auf die beschnittene Ansicht.
 
-**1d `max-image-preview:large` (0–5)**
-- 5 = gesetzt
-- 0 = fehlt oder `<meta name="robots">` ist nicht vorhanden
-- 3 = nicht prüfbar (Bild-only- oder Screenshot-Eingabe) — im Bericht als geschätzt markieren
+**1d Format (0–3)** — **[Praxis]**
+- 3 = WebP oder AVIF
+- 2 = JPEG
+- 0 = PNG oder untypisches Material
 
-Ohne dieses Signal darf Google das Bild nicht groß darstellen. Ein 1600-px-Bild ohne
-`max-image-preview:large` verhält sich wie ein 600-px-Bild.
+Google äußert sich zum Dateiformat nicht, rät aber von **textlastigen** Bildern ab. Gemeint sind
+vollgeschriebene Grafiken, nicht ein kurzer Schriftzug — der ist ausdrücklich Teil der
+Thumbnail-Formel in K2.
+
+**1e `max-image-preview:large` (0–4)** — **[Doku]**, der einzige harte technische Blocker
+- 4 = im robots-Meta gesetzt (oder AMP)
+- 0 = fehlt
+- 2 = nicht prüfbar (Bild-only- oder Screenshot-Eingabe) — im Bericht als geschätzt markieren
+
+Fehlt es, erscheint nur ein Mini-Thumbnail und die gesamte Titelbildarbeit läuft ins Leere. Beim
+Lesen aus rohem HTML **beide Anführungszeichen-Varianten** prüfen und zusätzlich den HTTP-Header
+`X-Robots-Tag`, der das Meta-Tag überstimmt.
+
+**1f Auslieferung (0–3)** — aus `delivery` · **[SDK]**
+
+Drei der fünf im SDK nachweisbaren Bild-Signale betreffen nicht das Motiv, sondern die Zustellung:
+Bildmaße, Download-Erfolg (`EMBER_FEED_THUMBNAILS_DOWNLOADED`) und Fehlerrate
+(`image_load_failure_count`). Volle 3 Punkte, je Mangel einen Punkt Abzug:
+
+- HTTPS (`og:image:secure_url` wird gegenüber HTTP bevorzugt)
+- `Content-Type` beginnt mit `image/`
+- keine Weiterleitung — in `og:image` die Ziel-URL direkt angeben
+- Download unter 400 ms, anonym abrufbar (kein Login, kein Hotlink-Schutz)
+
+Zusätzlich prüfen, ohne Punktwirkung: sind `og:image:width` und `og:image:height` gesetzt? Sie
+verhindern Fehl-Skalierung und falschen Zuschnitt. Und: nennen `og:image`, `WebPage` →
+`primaryImageOfPage` und `mainEntityOfPage` → `image` **dasselbe Motiv**? Widersprüchliche Quellen
+sind schlimmer als eine fehlende, weil Google dann wählt — und **Schema.org JSON-LD hat Vorrang
+vor allen OG-Tags** **[SDK]**. Abweichungen im Bericht benennen.
 
 ---
 
 ## K2 — Bildaussage (30)
 
-Rein visuell, aus der 340 × 190-Ansicht. Jedes Urteil nennt, was zu sehen ist.
+Struktur folgt der Thumbnail-Formel **Gesicht + 3–5 Wörter + Beweis-Element** **[Praxis]**. Die
+drei Komponenten wirken nur zusammen: das Gesicht erzeugt Blickkontakt, der Schriftzug liefert den
+Grund weiterzulesen, das Beweis-Element macht das Versprechen glaubhaft. Bewertung rein visuell an
+`ansicht_feedkarte_340x190.png`; jedes Urteil nennt, was zu sehen ist.
 
-**2a Kern-Entität erkennbar (0–10)**
-- 10 = Die Kern-Entität des Artikels ist auf den ersten Blick identifizierbar und dominiert das Bild
-- 7 = erkennbar, aber nicht dominant
+**2a Kern-Entität (0–8)**
+- 8 = Entität auf den ersten Blick identifizierbar, dominant, und **kreativ gezeigt** statt als
+  erwartbares Katalogfoto — Wiedererkennung plus Überraschung
+- 6 = klar erkennbar, aber erwartbare Abbildung
 - 4 = nur mit Vorwissen oder erst nach genauem Hinsehen erkennbar
 - 2 = thematisch verwandt, aber eine andere Sache als der Artikelgegenstand
-- 0 = nicht erkennbar oder thematisch beliebig
+- 0 = nicht erkennbar, oder Websitelogo bzw. generisches Motiv (**[Doku]** nennt das Websitelogo
+  ausdrücklich als untauglich)
 
-**2b Bildsprache (0–8)**
-- 8 = Close-up oder klar dominantes Einzelmotiv; ein Blickanker
-- 6 = mittlere Distanz, Motiv klar abgegrenzt
-- 3 = Weitwinkel oder Übersichtsaufnahme mit mehreren konkurrierenden Elementen
-- 0 = überfüllte Collage, Screenshot einer Oberfläche oder Infografik ohne Blickanker
+**2b Gesicht (0–8)** — je Teilkriterium
+- Die **eigene** Person, Autor oder Experte, nicht ein Model (0–3). Stock-Menschen erfüllen die
+  Aufmerksamkeitsfunktion, aber nicht die Absender-Funktion — und die ist der Grund, warum es
+  wirkt: das Bild zahlt gleichzeitig auf E-E-A-T und die Transparenz-Anforderung ein **[Richtlinie]**
+- Blick in die Kamera **oder** auf das gezeigte Objekt, nie ins Leere (0–2)
+- Ausdruck ist Haltung, nicht Grimasse — ernst-alarmiert, erklärend-zugewandt oder
+  selbstbewusst-präsentierend, passend zur Aussage. Übertriebene Mimik ist die Clickbait-Variante
+  des Bildes (0–2)
+- Gesicht groß genug, dass die Augen in der Kartenansicht erkennbar bleiben (0–1)
 
-**2c Menschliche Präsenz (0–6)**
-- 6 = Gesicht mit erkennbarem Ausdruck, groß im Bild
-- 4 = Person handelnd sichtbar, Gesicht klein oder abgewandt
-- 2 = Hände oder Körperteile im Einsatz
-- 0 = keine menschliche Präsenz
+Schließt das Thema Menschen inhaltlich aus, wird 2b mit 4 Punkten neutral bewertet und das
+begründet. Der Regelfall ist das nicht: Discover bewegt sich Richtung Creator- und Absenderlogik,
+ein Artikel ohne erkennbaren Menschen verschenkt genau das Signal, das die Plattform aufwertet.
 
-Kein Abzug, wenn das Thema Menschen inhaltlich ausschließt — dann wird 2c mit 3 Punkten neutral
-bewertet und das im Bericht begründet.
+**2c Schriftzug (0–7)**
+- **3–5 Wörter** (0–3): 3 = drei bis fünf · 2 = sechs bis sieben · 1 = acht bis zehn · 0 = mehr
+  oder kein Schriftzug. Die Obergrenze ist Erfassbarkeit im Scroll, keine Stilfrage — bei mehr
+  Wörtern wird überflogen, und überfliegen heißt weiterscrollen
+- **Behauptung oder Frage statt Beschreibung** (0–2): „Die Uhr tickt!", „DATEV per Chat
+  bebuchen?", „Mein KI-Team" sind ein Gedanke. Eine Zusammenfassung ist 0
+- **Ein Wort hervorgehoben** (0–2): Farbfläche hinter dem Schlüsselwort, Unterstreichung oder
+  Farbwechsel. Der Akzent führt das Auge und macht aus der Zeile eine Aussage mit Betonung
 
-**2d Spezifik statt Generik (0–6)**
-- 6 = erkennbar spezifisch zu diesem Artikel: das konkrete Produkt, der konkrete Ort, die
-  konkrete Person
-- 4 = passendes, aber austauschbares Motiv
-- 2 = erkennbares Stockfoto-Muster (glatte Studio-Optik, generische Szene, Symbolbild)
-- 0 = Symbolbild ohne Bezug, oder ein Motiv, das für Dutzende Artikel passen würde
+**2d Beweis-Element (0–4)**
+- 4 = sichtbarer Beleg für die Behauptung des Schriftzugs: Screenshot, UI-Ausschnitt, Produkt,
+  Logos der beteiligten Tools, eine Zahl als Badge („5 Agenten")
+- 2 = sprechende Geste als Ersatz bei abstraktem Thema (offene Hand, Zeigen)
+- 0 = keins, oder reine Dekoration ohne Belegfunktion
+
+**2e Herkunft des Motivs (0–3)**
+- 3 = eigenes oder erkennbar spezifisches Material; bei regionalem Thema die Zielregion erkennbar
+  (der Feed ist auch regional personalisiert)
+- 1 = passend, aber austauschbar
+- 0 = generisches Stockmaterial. Prüffrage ist nicht „erfüllt es die Specs", sondern „würde **die**
+  Zielgruppe dafür den Scroll stoppen"
 
 ---
 
 ## K3 — Tauglichkeit bei Kartengröße (25)
 
-**3a Bildaussage in der 340 × 190-Ansicht (0–10)**
-- 10 = Aussage trägt vollständig; nichts Tragendes verloren
-- 7 = Aussage trägt, Nebendetails verloren
-- 4 = Aussage nur noch angedeutet
-- 0 = in Kartengröße nicht mehr lesbar oder verwechselbar
+**3a Bildaussage bei 340 × 190 (0–8)**
+- 8 = Aussage trägt vollständig, nichts Tragendes verloren
+- 6 = Aussage trägt, Nebendetails verloren
+- 3 = Aussage nur noch angedeutet
+- 0 = nicht mehr lesbar oder verwechselbar
 
-Der Messwert `detail.loss_pct_of_range` ist hier **Prüfauslöser, nicht Urteil**: Er unterscheidet
-nicht zwischen verschwindender Schrift und verschwindender Textur. Bei einem Wert über 6 % wird
-die Kartenansicht gezielt daraufhin geprüft, ob die Bildaussage betroffen ist. Ist nur Textur
-betroffen (Materialstruktur, Blattwerk, Himmel), gibt es keinen Abzug.
+`detail.loss_pct_of_range` ist hier **Prüfauslöser, nicht Urteil**: Der Wert unterscheidet nicht
+zwischen verschwindender Schrift und verschwindender Textur. Über 6 % gezielt prüfen, ob die
+Bildaussage betroffen ist. Nur Textur betroffen (Materialstruktur, Blattwerk, Himmel) → kein Abzug.
 
-**3b Schriftlesbarkeit (0–6)**
-- 6 = keine Schrift im Bild, oder alle Schrift bleibt lesbar
+**3b Schriftlesbarkeit bei 340 × 190 (0–6)**
+- 6 = kein Schriftzug, oder alle Schrift bleibt lesbar
 - 4 = die tragende Aussage bleibt lesbar, Beiwerk nicht
 - 2 = nur Fragmente lesbar
 - 0 = Schrift wird zu Grafikrauschen
 
-Immer wörtlich zitieren, was noch entzifferbar ist. Fragmente sind schlimmer als keine Schrift:
-ein angeschnittenes „000 WATT" wirkt wie ein Fehler.
+Immer wörtlich zitieren, was noch entzifferbar ist. Fragmente sind schlimmer als keine Schrift.
+Voraussetzung für die oberen Stufen ist fette Sans mit hohem Kontrast auf dunklem oder
+abgedunkeltem Grund — der Feed wird auf dem Smartphone im Daumenkino gelesen.
 
-**3c Kompaktansicht 80 × 80 (0–5)**
-- 5 = Motiv bleibt im quadratischen Beschnitt intakt und verständlich
-- 3 = Motiv erkennbar, Marke oder Logo fällt weg
+**3c Zweiteilung Gesicht und Text (0–4)** — **[Praxis]**
+- 4 = klare Zweiteilung, etwa halbe Fläche Gesicht, halbe Text; beide unbeeinträchtigt
+- 2 = Aufteilung erkennbar, aber Text überlappt das Gesicht oder drängt es an den Rand
+- 0 = Text liegt über dem Gesicht, oder es gibt keine erkennbare Bildordnung
+
+Bewährte Muster zum Abgleich: Gesicht rechts, Text links, ein Wort farbig hinterlegt · Gesicht
+links, UI-Screenshot rechts, Zahlen-Badge.
+
+**3d Kompaktansicht 80 × 80 (0–4)**
+- 4 = Motiv bleibt im quadratischen Beschnitt intakt und verständlich
+- 2 = Motiv erkennbar, Marke oder Logo fällt weg
 - 1 = Beschnitt zerstört die Aussage, Schriftfragmente bleiben stehen
 - 0 = im Quadrat nicht mehr deutbar
 
 Randständige Logos und Markennamen sind hier der Regelfall des Scheiterns. Konsequenz für die
-Bildproduktion: alles Tragende in das mittlere Quadrat legen.
+Produktion: alles Tragende in das mittlere Quadrat legen.
 
-**3d Kontrast und Auffälligkeit (0–4)** — aus `luminance.rms_contrast` und `colorfulness`
-- 4 = RMS-Kontrast ≥ 60 und Farbigkeit ≥ 40
-- 3 = eines von beiden erfüllt
-- 2 = RMS-Kontrast 40–59
-- 0 = RMS-Kontrast < 40 und Farbigkeit < 20
+**3e Kontrast und Auffälligkeit (0–3)** — aus `luminance.rms_contrast` und `colorfulness`
+- 3 = RMS-Kontrast ≥ 60 **und** Farbigkeit ≥ 40
+- 2 = eines von beiden erfüllt
+- 1 = RMS-Kontrast 40–59
+- 0 = Kontrast < 40 und Farbigkeit < 20
 
-Zusätzlich prüfen: `clipped_white_pct` über 15 % bedeutet ausgebrannte Flächen — in einem
-hellen Feed verschwimmt die Karte mit dem Hintergrund. Ein Punkt Abzug, unabhängig vom Kontrastwert.
+Zusätzlich: `clipped_white_pct` über 15 % bedeutet ausgebrannte Flächen — in einem hellen Feed
+verschwimmt die Karte mit dem Hintergrund. Ein Punkt Abzug, unabhängig vom Kontrastwert.
 
 ---
 
 ## K4 — Zusammenspiel mit der Headline (20)
 
-Entfällt bei Bild-only-Eingabe. Dann wird der Score auf 80 Punkte normiert und das im Bericht
-ausgewiesen — nicht hochgerechnet und nicht geschätzt.
+Entfällt bei Bild-only-Eingabe. Dann wird der Score auf 80 Punkte normiert und das ausgewiesen —
+nicht hochgerechnet und nicht geschätzt.
 
-**4a Ergänzung statt Doppelung (0–8)**
-- 8 = Bild liefert eine Information, die die Headline nicht hat, und umgekehrt
-- 5 = Bild illustriert die Headline, ohne zu ergänzen
-- 2 = Bild wiederholt die Headline wörtlich (Headline-Text als Bildtext)
-- 0 = Bild und Headline widersprechen sich
+Zur Erinnerung, was hier bewertet wird: Der Discover-Titel ist der **`og:title`** und darf sich von
+Meta-Title und H1 unterscheiden — drei Titel, drei Aufgaben. Verglichen wird der Bildschriftzug
+gegen den `og:title`, nicht gegen die H1.
 
-Die Fläche im Feed ist begrenzt. Wer die Headline im Bild wiederholt, verschenkt die Hälfte der
-Karte — und hat die Aussage doppelt, wo zwei Aussagen möglich wären.
+**4a Schriftzug ergänzt den `og:title` (0–8)** — **[Praxis]**
+- 8 = Schriftzug liefert einen **zweiten Haken**: eine andere Ebene als der Titel (Emotion,
+  Dringlichkeit, Zahl, Perspektive), nicht dasselbe in anderen Worten
+- 5 = illustriert den Titel, ohne zu ergänzen
+- 2 = wiederholt die Kernbegriffe des Titels
+- 0 = Schriftzug und Titel widersprechen sich
 
-**4b Markenverhältnis (0–4)**
+Die Karte hat zwei Flächen. Doppeln beide, verschenkt sie eine davon. Das ist der häufigste
+Einzelfehler bei ansonsten gut gemachten Karten — insbesondere bei aus YouTube übernommenen
+Thumbnails, wo der Titel klein und grau unter dem Bild steht und das Bild den Hook allein tragen
+muss. In Discover steht die Headline prominent daneben.
 
-Discover zeigt den Publisher-Namen ohnehin als Text unter der Karte. Entscheidend ist deshalb
-nicht, ob die eigene Marke im Bild steht, sondern ob die Karte redaktionell oder werblich wirkt.
+**4b Werbeanteil und Kennzeichnung (0–4)** — **[Richtlinie]**
+
+Die Richtlinien verlangen, dass Werbung und Werbemittel den Anteil der Nachrichteninhalte nicht
+überschreiten, und dass gesponserte Inhalte deutlich gekennzeichnet werden.
 
 - 4 = liest sich als redaktioneller Beitrag; Fremdmarken nur, soweit inhaltlich nötig
-- 3 = Fremdmarke sichtbar, aber dem Bildmotiv untergeordnet
+- 3 = Fremdmarke sichtbar, dem Bildmotiv untergeordnet
 - 2 = Fremdmarken dominieren die Fläche; die Karte wirkt werblich
 - 1 = von einer Anzeige nicht unterscheidbar, ohne Kennzeichnung
-- 0 = irreführend hinsichtlich des Absenders
+- 0 = irreführend hinsichtlich des Absenders, oder getarntes Sponsoring
 
-Werblich wirkende Karten in einem redaktionellen Feed kosten Klickqualität: Wer eine Einordnung
-erwartet und eine Werbefläche bekommt, springt zurück.
+Discover zeigt den Publisher-Namen ohnehin als Text unter der Karte (`og:site_name`) — es geht
+also nicht darum, ob die eigene Marke im Bild steht, sondern ob die Karte redaktionell wirkt.
 
-**4c Einlösung (0–8)**
+**4c Einlösung (0–8)** — **[Richtlinie]** + **[SDK]**
 - 8 = Die Karte verspricht exakt, was der Artikel liefert
 - 5 = Versprechen leicht überzogen
 - 2 = Karte verspricht mehr als der Artikel hält
 - 0 = irreführend
 
-Die Klickqualität fließt in die Discover-Bewertung zurück. Eine Karte, die überverkauft, schadet
-zweimal: beim Rücksprung und in der Fortschreibung.
+Zwei unabhängige Gründe, warum das kein Stilkriterium ist: Die Richtlinien untersagen
+Vorschauinhalte, die zur Interaktion verleiten, indem **Details vorgetäuscht** werden — und die
+Regel greift ausdrücklich am Vorschauelement, also an `og:title` und `og:image`, nicht am
+Artikeltext. Und die Klickqualität wird nach dem Navboost-Modell bewertet: ein Titel, der klickt,
+aber nicht einlöst, verliert dort. Clickbait ist rechnerisch schlecht, nicht moralisch.
+
+Erschwerend: die historische CTR wird **pro URL** geführt (`click_count`/`show_count`) **[SDK]**.
+Eine URL trägt ihre Feed-Reputation in künftige Ausspielungen mit. Ein schwacher Start belastet
+diese URL dauerhaft — Titel- und Bildwechsel auf einer verbrannten URL wirken begrenzt. Bei
+grundlegend neuem Aufhänger ist eine neue URL die ehrlichere Option. Gehört in die Empfehlung,
+wenn 4c bei 2 oder darunter liegt.
 
 ---
 
@@ -180,26 +265,26 @@ zweimal: beim Rücksprung und in der Fortschreibung.
 | Score | Band | Bedeutung |
 |-------|------|-----------|
 | 85–100 | **Feed-stark** | Karte funktioniert. Nur Feinschliff. |
-| 70–84 | **Solide** | Ein klarer Hebel offen, meist Beschnitt oder Kontrast. |
+| 70–84 | **Solide** | Ein klarer Hebel offen, meist Beschnitt, Doppelung oder Kontrast. |
 | 55–69 | **Mittel** | Karte verliert im Wettbewerb mit Nachbarkarten. |
 | 40–54 | **Schwach** | Bild trägt die Karte nicht. Neues Motiv oder neuer Ausschnitt. |
 | < 40 | **Nicht feed-tauglich** | Technisch oder inhaltlich unbrauchbar. |
 
 Deckel:
 
-- Breite < 1200 px → Gesamtscore maximal **55**. Ohne große Karte ist alles andere zweitrangig.
-- `max-image-preview:large` fehlt nachweislich → maximal **60**, aus demselben Grund.
-- K2 2a ≤ 2 Punkte (Kern-Entität nicht erkennbar) → maximal **50**. Ein Bild, das nicht zeigt,
-  worum es geht, kann seine Aufgabe nicht erfüllen.
+- **Google-Spezifikation nicht erfüllt** (`google_spec.all_met` = false: Breite, Fläche oder 16:9)
+  → maximal **55**. Das ist die Untergrenze der Zulässigkeit, kein Feinschliff.
+- **Bild nicht anonym abrufbar oder `Content-Type` nicht `image/*`** → maximal **40**. Ohne
+  erfolgreichen Thumbnail-Download entsteht laut SDK **keine Karte** — kein Textfallback.
+- **`max-image-preview:large` fehlt nachweislich** → maximal **60**.
+- **K2 2a ≤ 2** (Kern-Entität nicht erkennbar) → maximal **50**.
 - Score > 85 nur, wenn jede Dimension mindestens 80 % ihres Maximums erreicht.
-- Nicht messbare Unterkriterien (Screenshot-Eingabe, fehlendes Pillow) werden neutral bewertet
-  und im Bericht als geschätzt markiert. Ein Score mit mehr als zwei geschätzten Unterkriterien
-  wird als Bereich angegeben, nicht als Zahl.
+- Nicht messbare Unterkriterien neutral bewerten und als geschätzt markieren. Bei mehr als zwei
+  geschätzten Unterkriterien den Score als Bereich angeben, nicht als Zahl.
 
 ## Score-Delta
 
 Nach den Maßnahmen den erreichbaren Score angeben, mit Zuordnung: welche Maßnahme hebt welches
-Unterkriterium um wie viele Punkte. Bildaufträge sind teuer — ein neues Motiv kostet mehr als ein
-neuer Ausschnitt. Deshalb bei jeder Maßnahme unterscheiden zwischen **Ausschnitt ändern**
-(Minuten, aus dem vorhandenen Bild), **Bild ersetzen** (Stunden oder Kosten) und
-**Bild neu produzieren** (Auftrag).
+Unterkriterium um wie viele Punkte. Dabei nach Kosten unterscheiden — **Ausschnitt ändern**
+(Minuten, aus dem vorhandenen Bild) · **Schriftzug oder Badge ergänzen** (Grafik, unter einer
+Stunde) · **Bild ersetzen** (Stunden oder Lizenzkosten) · **Bild neu produzieren** (Shooting).
