@@ -1,11 +1,15 @@
 # Discover Content Optimizer
 
-Claude-Code-Plugin für die semantische Analyse von Artikeltexten mit Blick auf **Google
-Discover** und **AI-Sichtbarkeit**. Prüft nicht, ob ein Text gut geschrieben ist, sondern ob
-Google ihn einem Thema, einer Entität und einem Nutzerinteresse zweifelsfrei zuordnen kann.
+Claude-Code-Plugin mit zwei Skills für **Google Discover** und **AI-Sichtbarkeit**. Zusammen
+decken sie die beiden Hebel ab, die im Feed über den Klick entscheiden: den Text und die Karte.
 
-Ergebnis: ein **Discover Content Score 0–100** nach dokumentierter Rubrik, ein priorisierter
-Maßnahmenplan mit Aufwand und erwarteter Score-Wirkung, und fertige Textbausteine zum Einsetzen.
+| Skill | Prüft | Ergebnis |
+|-------|-------|----------|
+| **discover-content-optimizer** | den **Artikeltext**: kann Google ihn einem Thema, einer Entität und einem Nutzerinteresse zweifelsfrei zuordnen? | Discover Content Score 0–100, Maßnahmenplan, fertige Textbausteine, JSON-LD |
+| **discover-feedkarte** | die **Feed-Karte**: Titelbild und Headline als Einheit, gerendert auf echte Kartengröße | Feed-Karten-Score 0–100, Tabelle „was in welcher Größe verschwindet", Bildaufträge |
+
+Beide arbeiten mit dokumentierter Rubrik, Punkten pro Unterkriterium und Belegpflicht: jeder
+Befund zitiert die Textstelle oder benennt, was in welcher Bildansicht sichtbar ist.
 
 ## Installation
 
@@ -15,32 +19,42 @@ Maßnahmenplan mit Aufwand und erwarteter Score-Wirkung, und fertige Textbaustei
 
 Danach in der Plugin-Übersicht `discover-content-optimizer` installieren.
 
-Alternativ ohne Git: den Ordner `skills/discover-content-optimizer` nach
-`~/.claude/skills/` kopieren.
+Alternativ ohne Git: die Ordner unter `skills/` nach `~/.claude/skills/` kopieren.
 
-**Voraussetzung:** Python 3.8+ im PATH für das Rechen-Backend (nur Standardbibliothek, keine
-Pakete). Ohne Python läuft die Analyse weiter, aber Struktur- und Integrationswerte werden
-geschätzt statt berechnet — der Bericht weist das dann aus.
+**Voraussetzungen**
+
+| Skill | Braucht |
+|-------|---------|
+| discover-content-optimizer | Python 3.8+ (nur Standardbibliothek). Fehlt Python, werden Struktur- und Integrationswerte geschätzt statt berechnet — der Bericht weist das aus |
+| discover-feedkarte | Python 3.8+ **und Pillow** (`pip install pillow`). Ohne Pillow entfällt der Kartengrößen-Test; der Score wird entsprechend gedeckelt statt geschätzt |
 
 ## Nutzung
 
-Text einfügen und eine Analyse anfordern:
+**Text prüfen:**
 
 ```
 Prüf diesen Artikel auf Discover-Tauglichkeit:
 <Text, erste Zeile = Headline>
 ```
 
-Auch möglich: URL statt Text, plus optional ein Wettbewerbertext für die Gap-Analyse.
+Auch möglich: URL statt Text, plus optional ein Wettbewerbertext für die Gap-Analyse. Der Skill
+fragt nach dem Domain-Profil, wenn es nicht aus dem Text hervorgeht: Technologie · Gesundheit ·
+Finanzen · Bildung · E-Commerce · News · Flash News · Allgemein. Das Profil steuert, welche
+Entitäten erwartet und welche Vertrauenssignale gewichtet werden.
 
-Der Skill fragt nach dem Domain-Profil, wenn es nicht aus dem Text hervorgeht:
-Technologie · Gesundheit · Finanzen · Bildung · E-Commerce · News · Flash News · Allgemein.
-Das Profil steuert, welche Entitäten erwartet und welche Vertrauenssignale gewichtet werden.
+**Feed-Karte prüfen:**
 
-Am Ende wird gefragt, ob zusätzlich ein Word-Bericht, eine Excel-Maßnahmenliste oder ein
-HTML-Einseiter erzeugt werden soll. Ohne Auswahl bleibt es beim Bericht im Chat.
+```
+Prüf das Titelbild dieser URL für Discover: <url>
+```
 
-## Was analysiert wird
+Ebenfalls möglich: Bilddatei plus Headline, oder ein Screenshot einer Discover-Karte — dann
+braucht es keinen Seitenzugriff und keine Paywall-Umgehung.
+
+In beiden Fällen wird am Ende gefragt, ob zusätzlich ein Word-Bericht, eine Excel-Maßnahmenliste
+oder ein HTML-Einseiter erzeugt werden soll. Ohne Auswahl bleibt es beim Bericht im Chat.
+
+## Skill 1: discover-content-optimizer — was analysiert wird
 
 | Modul | Inhalt |
 |-------|--------|
@@ -67,10 +81,43 @@ ohne benannte Quelle und ohne Faktendichte bei 55.
 Die vollständige Rubrik steht in `skills/discover-content-optimizer/references/scoring.md`
 und wird im Bericht mit Punkten pro Unterkriterium offengelegt.
 
-## Was der Skill bewusst anders macht
+## Skill 2: discover-feedkarte — das Bild dort prüfen, wo es wirkt
 
-Der Skill orientiert sich am Funktionsumfang des *Advanced Google Discover Optimizer* von
-metehan.ai, weicht aber an drei Stellen ab:
+Im Feed konkurriert kein Artikel, sondern eine Karte von rund 340 × 190 Punkten, wahrgenommen im
+Scrollen. Ein Titelbild, das in Originalgröße überzeugt, kann dort vollständig versagen. Der Skill
+misst das Bild und **rendert es auf die echten Kartengrößen**, bevor er urteilt:
+
+| Ansicht | Wofür |
+|---------|-------|
+| 340 × 190 | die große Feed-Karte — Hauptbewertungsgrundlage |
+| 80 × 80 | kompakte Listenansicht — zeigt, was ein quadratischer Beschnitt zerstört |
+| 16:9-Beschnitt | zeigt bei abweichendem Seitenverhältnis, was wegfällt |
+
+Gemessen werden Breite, Seitenverhältnis samt Beschnittverlust, Format und Dateigröße,
+Helligkeit, RMS-Kontrast, ausgebrannte Flächen, Farbigkeit nach Hasler-Süsstrunk und der
+Informationsverlust bei Feed-Größe. Visuell beurteilt werden Erkennbarkeit der Kern-Entität,
+Bildsprache, Schriftlesbarkeit, Wirkung des Beschnitts und das Markenverhältnis.
+
+| Dimension | Punkte |
+|-----------|-------:|
+| Technische Auslieferbarkeit | 25 |
+| Bildaussage | 30 |
+| Tauglichkeit bei Kartengröße | 25 |
+| Zusammenspiel mit der Headline | 20 |
+
+Deckel: unter 1200 px Breite ist bei 55 Schluss, ohne `max-image-preview:large` bei 60, und wenn
+die Kern-Entität im Bild nicht erkennbar ist bei 50.
+
+Der wichtigste Ausgabeteil ist die Tabelle **„was in welcher Größe verschwindet"** — Element für
+Element, in welcher Ansicht es noch sichtbar ist. Beispiel aus
+[examples/beispielbericht-feedkarte.md](examples/beispielbericht-feedkarte.md): bei einem
+technisch einwandfreien 1600 × 900-Bild fallen im quadratischen Beschnitt Logo und Markenblock
+komplett weg, übrig bleibt das Fragment „000 WATT".
+
+## Was die Skills bewusst anders machen
+
+Sie orientieren sich am Funktionsumfang des *Advanced Google Discover Optimizer* von
+metehan.ai, weichen aber an vier Stellen ab:
 
 1. **Der Ist-Zustand wird bewertet.** Die Original-Headline bekommt einen Score, bevor
    Alternativen entstehen. Sonst ist nicht messbar, ob eine Alternative besser ist.
@@ -83,16 +130,24 @@ metehan.ai, weicht aber an drei Stellen ab:
    unterscheiden nichts. Stattdessen wird berechnet, ob *dieser Text* die Entität einbindet:
    Häufigkeit, Absatz-Spread, Ko-Vorkommen mit anderen Entitäten, Definitions-, Vergleichs-
    und Kausalmarker, Faktendichte im Umfeld. Reproduzierbar, ohne API und ohne Kosten.
+4. **Das Bild wird in Kartengröße geprüft.** Das metehan-Tool
+   *image-to-google-discover* trägt „image" im Namen, nimmt einen Screenshot aber nur als
+   Eingabeformat und prüft nirgends Bildbreite, Beschnitt, Kontrast oder Lesbarkeit als
+   Thumbnail. `discover-feedkarte` rendert das Bild auf 340 × 190 und 80 × 80 und beurteilt es
+   dort — die Größe, in der es tatsächlich wahrgenommen wird.
 
 ## Grenzen
 
-- Analysiert **Text**. Bildwirkung, `og:image`-Maße, `max-image-preview`, News-Sitemap und
-  Startseiten-Prominenz sind nicht Teil davon.
+- Der Textskill analysiert **Text**, der Kartenskill **Bild und Headline**. News-Sitemap,
+  OG-Vollständigkeit und Startseiten-Prominenz sind in keinem von beiden.
 - „Fehlende Entitäten" sind ohne SERP-Daten eine begründete Vermutung, keine Messung. Sind
   SERP-MCPs verfügbar (DataForSEO, Ahrefs, SurferSEO), wird der Erwartungsraum aus real
   rankenden Seiten gebildet und das im Bericht ausgewiesen.
-- Headline-Scores sind Rubrik-Werte, keine CTR-Prognose.
-- Der Score sagt nichts über Domain-Autorität, Site-Trust oder Publisher-Status — die
+- Beide Scores sind Rubrik-Werte, keine CTR-Prognose.
+- Die Kartenmaße 340 × 190 und 80 × 80 sind Größenordnungen der ausgelieferten Karten, keine von
+  Google dokumentierten Spezifikationen. „Bei dieser Größe verschwindet X" ist belastbar; „genau
+  so sieht die Karte bei jedem Nutzer aus" nicht.
+- Kein Score sagt etwas über Domain-Autorität, Site-Trust oder Publisher-Status — die
   entscheiden vor jeder Content-Qualität über Discover-Eligibility.
 
 ## Aufbau
@@ -108,16 +163,30 @@ skills/discover-content-optimizer/
   references/domains.md             8 Domain-Profile
   references/discover-mechanik.md   Begründungsbasis, Headline-Formeln
   assets/report-template.html       HTML-Einseiter
-tests/                              Beispieltexte für Kalibrierungsprüfungen
+skills/discover-feedkarte/
+  SKILL.md                          Ablauf, drei Eingabewege, Bewertung an den Ansichten
+  scripts/feedcard.py               Mess- und Render-Backend (braucht Pillow)
+  references/kartenrubrik.md        Feed-Karten-Rubrik, Deckel, Bänder
+examples/                           zwei vollständige Beispielberichte
+tests/                              Beispieltexte und Testprotokoll
 ```
 
-## Rechen-Backend direkt aufrufen
+## Backends direkt aufrufen
 
 ```bash
 python skills/discover-content-optimizer/scripts/textstats.py \
-  --text-file artikel.txt --entities "Entität A,Entität B"
+  --text-file artikel.txt --core "Kernentität A" --entities "Quelle B"
 ```
 
 Liefert JSON: Dokumentstatistik, Lesbarkeit (Flesch bzw. Flesch-Amstad), Headline- und
 Lead-Metriken, Faktendichte, thematische Kernbegriffe und TF-IDF-Spitzen, Trust-Marker,
 pro Entität Integrations-Score, Kookkurrenzmatrix.
+
+```bash
+python skills/discover-feedkarte/scripts/feedcard.py \
+  --image https://example.com/titelbild.jpg --out ansichten
+```
+
+Liefert JSON mit Maßen, Seitenverhältnis und Beschnittverlust, Format, Helligkeit, RMS-Kontrast,
+Farbigkeit, Informationsverlust bei Feed-Größe und automatischen Hinweisen — plus die drei
+gerenderten Ansichten im angegebenen Verzeichnis.

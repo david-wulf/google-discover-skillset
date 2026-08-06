@@ -8,7 +8,7 @@
     {
       "name": "discover-content-optimizer",
       "source": "./",
-      "description": "Analysiert Artikeltexte auf Google-Discover-Tauglichkeit: Entitäten-Abdeckung und -Integration, Headline-Varianten mit kalibrierter Rubrik, JSON-LD-Generierung samt Validierung, Keyword- und Themenfokus, fehlende semantische Konzepte. Liefert Discover Content Score 0–100 und einen priorisierten Maßnahmenplan."
+      "description": "Zwei Skills für Google Discover. discover-content-optimizer analysiert Artikeltexte: Entitäten-Abdeckung und -Integration, Headline-Varianten mit kalibrierter Rubrik, JSON-LD samt Validierung, Keyword- und Themenfokus, fehlende semantische Konzepte. discover-feedkarte bewertet das Titelbild dort, wo es wirkt: gerendert auf echte Kartengröße 340 × 190 und 80 × 80, plus Bild-Headline-Zusammenspiel. Beide mit Score 0–100 und priorisiertem Maßnahmenplan."
     }
   ]
 }

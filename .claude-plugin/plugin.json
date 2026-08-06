@@ -1,7 +1,7 @@
 {
   "name": "discover-content-optimizer",
-  "description": "Semantische Tiefenanalyse von Artikeltexten für Google Discover und AI-Sichtbarkeit: Entitäten, Headline-Rubrik, Schema-Markup, Keywords, semantische Abdeckung — mit Discover Content Score 0–100 und Maßnahmenplan.",
-  "version": "1.0.0",
+  "description": "Zwei Skills für Google Discover: semantische Tiefenanalyse von Artikeltexten (Entitäten, Headline-Rubrik, Schema, Keywords) und Bewertung der Feed-Karte (Titelbild bei echter Kartengröße, Bild-Headline-Zusammenspiel). Beide mit kalibriertem Score 0–100 und Maßnahmenplan.",
+  "version": "1.1.0",
   "author": {
     "name": "David Wulf Growth Consulting",
     "email": "wulf@homeandsmart.de"
@@ -12,6 +12,9 @@
     "content-analyse",
     "entitaeten",
     "semantic-seo",
-    "schema-org"
+    "schema-org",
+    "titelbild",
+    "feed-karte",
+    "ctr"
   ]
 }
