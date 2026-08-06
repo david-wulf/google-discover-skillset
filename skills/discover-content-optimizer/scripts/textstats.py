@@ -577,10 +577,13 @@ def analyse(text, entities=None, lang="auto", core=None):
 def main():
     # Ohne das liefert die Ausgabe auf Windows-Konsolen (cp1252) Ersatzzeichen
     # statt Umlauten.
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except AttributeError:
-        pass
+    # Gilt fuer beide Richtungen: ohne das kommt deutscher Text ueber stdin
+    # als cp1252 an und Umlaute gehen auf dem Rueckweg verloren.
+    for stream in (sys.stdin, sys.stdout):
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except (AttributeError, ValueError):
+            pass
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", help="Pfad zur JSON-Datei; ohne Angabe wird stdin gelesen")
