@@ -60,7 +60,10 @@ Drei Ausgangslagen, drei Wege:
 
 **B — Ein Titel vorhanden, Varianten gewünscht.** Original zuerst bewerten, dann vier Varianten
 mit **je unterschiedlicher Formel** aus `references/formeln.md` erzeugen und alle fünf gemeinsam
-durchrechnen.
+durchrechnen. Jede Variante ist ein **ganzer Satz** — kein Keyword-Stapel, kein Doppelpunkt
+(in Titeltests derselben Artikel gewann der ganze Satz ausnahmslos, `references/formeln.md`).
+Die Länge ist dabei kein Kriterium: Eine Zeichenzahl-Vorgabe ist nicht bestätigt, Titel über 65
+Zeichen funktionieren im Feed problemlos.
 
 **C — Nur ein Thema, noch kein Titel** („Was wäre eine gute Discover-Überschrift für X?").
 Hier gilt eine harte Regel: **Ein guter Discover-Titel trägt einen Fakt, und ein Fakt wird nicht
@@ -93,14 +96,19 @@ und wird eingesetzt — die Quelle ist dann der Nutzer, und das steht im Bericht
 python scripts/pctr.py features --titles-file titel.txt --entity "Kernentität"
 ```
 
-Auch möglich: `--title "..."` mehrfach. Ausgabe ist JSON pro Titel mit Länge und Längenband,
+Auch möglich: `--title "..."` mehrfach. Ausgabe ist JSON pro Titel mit Zeichen- und Wortzahl (nur gezählt, nicht bewertet),
 Konkretheit (Zahl, Einheit, Währung, Jahr), Ansprache (Frage, Du/Sie, Ich-Perspektive, Versalien,
 Ausrufezeichen), Autoritäts-, Frische- und Superlativ-Markern, Clickbait-Lexikontreffern,
-erkannten Formeln, Struktur und der Position der Kernentität.
+erkannten Formeln, Struktur (Doppelpunkt, Gedankenstrich, Satzform) und der Position der
+Kernentität.
 
 Zwei Dinge zur Auslegung:
 
 - `capitalized_tokens` ist **kein** Entitätennachweis. Im Deutschen sind alle Substantive groß.
+- `structure.sentence_form` (`satz` · `keyword_stapel` · `unklar`) ist eine Heuristik über
+  Funktionswörter und Kleinschreibung, nur für Deutsch. Ein `keyword_stapel` drückt
+  `title_formatting` auf höchstens 3 und gehört als eigener Befund ins Urteil — das Modell
+  gewichtet die Dimension mit 8 % schwächer, als der Effekt in Titeltests ausfiel.
 - Clickbait-Lexikontreffer sind Verdachtsmomente. „keiner merkt es" kann in einem Text, der genau
   das belegt, gedeckt sein — ein Treffer verlangt eine Entscheidung mit Begründung, keinen
   Automatismus.

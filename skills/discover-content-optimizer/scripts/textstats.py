@@ -515,7 +515,6 @@ def analyse(text, entities=None, lang="auto", core=None):
             "text": headline,
             "characters": len(headline),
             "words": len(words_of(headline)),
-            "over_65_chars": len(headline) > 65,
             "contains_number": bool(re.search(r"\d", headline)),
             "contains_colon_or_dash": bool(re.search(r"[:–—-]", headline)),
             "direct_address": bool(re.search(r"\b(?:du|dich|dir|dein\w*|euer|eure\w*|your|you)\b",

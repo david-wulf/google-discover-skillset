@@ -68,10 +68,9 @@ SIGMOID_MIDPOINT = 5.5
 # Bandgrenzen des Originals (pctrClass im Client-JS)
 PCTR_BANDS = [(14.0, "top"), (9.0, "hoch"), (5.0, "mittel"), (0.0, "niedrig")]
 
-# Laengenfenster fuer den og:title. Richtwert ~70-95 Zeichen: darunter bleibt
-# Platz fuer den Haken ungenutzt, darueber wird im Feed abgeschnitten.
-LEN_SWEET = (70, 95)
-LEN_ACCEPTABLE = (50, 110)
+# Keine Laengenbaender: Eine Zeichenzahl-Vorgabe fuer den og:title ist nicht
+# bestaetigt, Titel ueber 65 Zeichen funktionieren im Feed problemlos. Die
+# Laenge wird gezaehlt, aber nicht bewertet.
 
 # --------------------------------------------------------------------------- #
 # Lexika
@@ -151,6 +150,50 @@ sie ihr ihre ihren ihrem du dein deine dich dir wir uns unser
 """.split())
 
 
+# Zusaetzliche Satzmarker fuer die Satzform-Heuristik: Pronomen, Hilfs- und
+# Modalverben, Subjunktionen. Ein Keyword-Stapel enthaelt davon fast nichts.
+SENTENCE_MARKERS_DE = STOP_DE | set("""
+dies diese dieser dieses diesen diesem jeder jede jedes jeden fast
+er ihm ihn dein deinen deinem deiner euch euer eure
+kann koennen können muss muessen müssen soll sollte sollten will wollen darf
+macht machen machst gibt geben bringt bringen sagen sagt
+dass weil wenn obwohl damit ob bevor nachdem waehrend während trotzdem denn sondern
+""".split())
+
+EN_FUNCTION_WORDS = set("""
+the a is are were be to of for and or you your how why what when with without
+on at this that these it its can do does my our we
+""".split())  # bewusst ohne "in", "an", "was", "will": die sind auch deutsch
+
+
+def sentence_form(title, lang):
+    """Heuristik: ganzer Satz oder Keyword-Stapel (nur Deutsch).
+
+    Satz = mindestens zwei Funktionswoerter. Stapel = hoechstens eines und
+    kaum kleingeschriebene Woerter — im Deutschen sind Verben, Artikel und
+    Pronomen klein, ein Substantiv-Stapel ist fast durchgehend gross.
+
+    Ein deutscher Keyword-Stapel enthaelt keine Stoppwoerter und wird von
+    detect_lang deshalb als Englisch erkannt. Darum gilt "nicht gemessen" nur,
+    wenn der Titel tatsaechlich englische Funktionswoerter enthaelt.
+    """
+    words = [w for w in re.findall(r"[^\W\d_]+", title, re.UNICODE)]
+    if lang != "de" and any(w.lower() in EN_FUNCTION_WORDS for w in words):
+        return {"value": "nicht_gemessen", "note": "Heuristik nur fuer Deutsch"}
+    markers = [w for w in words if fold(w) in {fold(x) for x in SENTENCE_MARKERS_DE}]
+    rest = words[1:]
+    lower_share = (sum(1 for w in rest if w[:1].islower()) / len(rest)) if rest else 0.0
+    if len(markers) >= 2:
+        value = "satz"
+    elif len(markers) == 0 or lower_share <= 0.4:
+        value = "keyword_stapel"
+    else:
+        value = "unklar"
+    return {"value": value, "function_words": len(markers),
+            "lowercase_share": round(lower_share, 2),
+            "note": "Hinweis fuer title_formatting, kein Urteil"}
+
+
 def fold(t):
     t = t.lower().translate(str.maketrans({"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"}))
     return "".join(c for c in unicodedata.normalize("NFD", t)
@@ -173,18 +216,6 @@ def hits(text, patterns):
                 found.append(m.group(0).strip().lower())
                 break
     return sorted(set(found))
-
-
-def length_band(n):
-    if LEN_SWEET[0] <= n <= LEN_SWEET[1]:
-        return "optimal"
-    if LEN_ACCEPTABLE[0] <= n < LEN_SWEET[0]:
-        return "kurz — Platz fuer den Haken bleibt ungenutzt"
-    if LEN_SWEET[1] < n <= LEN_ACCEPTABLE[1]:
-        return "lang — Abschneiden im Feed moeglich"
-    if n < LEN_ACCEPTABLE[0]:
-        return "zu kurz — traegt kaum einen Haken"
-    return "zu lang — wird im Feed abgeschnitten"
 
 
 def detect_formulas(title):
@@ -227,8 +258,6 @@ def features(title, entity=None, lang="auto"):
         "length": {
             "characters": len(title),
             "words": len(words),
-            "band": length_band(len(title)),
-            "in_sweet_spot_70_95": LEN_SWEET[0] <= len(title) <= LEN_SWEET[1],
         },
         "concreteness": {
             "has_number": bool(re.search(r"\d", title)),
@@ -274,6 +303,7 @@ def features(title, entity=None, lang="auto"):
             "has_colon": ":" in title,
             "has_dash": bool(re.search(r"\s[–—-]\s", title)),
             "segments": len([s for s in re.split(r"[:–—]|\s-\s", title) if s.strip()]),
+            "sentence_form": sentence_form(title, lang),
         },
         "entity": entity_position(title, entity),
     }

@@ -104,12 +104,13 @@ konkretestes Ergebnis). Dann:
 
 **K5 Feed-Tauglichkeit (0–2)**
 
-Bewertet wird der **`og:title`**, nicht die H1. Richtwert ist **70–95 Zeichen**: darunter bleibt
-Platz für den Haken ungenutzt, darüber wird im Feed abgeschnitten.
+Bewertet wird der **`og:title`**, nicht die H1. Die Länge zählt nicht: Eine Zeichenzahl-Grenze
+ist nicht bestätigt, Titel über 65 Zeichen funktionieren im Feed problemlos.
 
-- 2 = 70–95 Zeichen **und** Kernentität in den ersten 40 Zeichen
-- 1 = Länge 50–69 oder 96–110 Zeichen (Platz ungenutzt bzw. Abschneiderisiko), Kernentität vorn
-- 0 = unter 50 oder über 110 Zeichen, oder Kernentität steht am Ende
+- 2 = ganzer Satz **und** Kernentität in den ersten 40 Zeichen
+- 1 = ganzer Satz mit Kernentität hinten, oder Doppelpunkt-Zweiteilung statt Satz
+- 0 = **Keyword-Stapel** (aneinandergereihte Substantive ohne Satz — verlor in Titeltests
+  ausnahmslos gegen den ganzen Satz, siehe `discover-mechanik.md`, Prinzip 6)
 
 Wenn der Skill `discover-headline` verfügbar ist, wird die Headline dort mit dem vollen
 pCTR-Modell bewertet und dessen Ergebnis hier übernommen statt doppelt beurteilt.
@@ -122,7 +123,7 @@ Diese Regeln sind der Grund, dass der Score überhaupt aussagekräftig ist:
   wirken, ist eine davon zu senken — mit Begründung, welches Kriterium sie schlechter erfüllt.
 - Eine Headline ohne Zahl, Eigennamen oder prüfbares Ergebnis kann **nie** über 6,0 kommen
   (K1 = 0 oder 1 begrenzt automatisch).
-- Außerhalb von 70–95 Zeichen: K5 ≤ 1, und im Bericht wird die gemessene Zeichenzahl genannt.
+- Keyword-Stapel: K5 = 0, und der Stapel wird im Bericht als eigener Befund genannt.
 - Wenn keine Variante das Original um ≥ 1,5 Punkte übertrifft, lautet die Empfehlung
   „Original behalten". Das ist ein Ergebnis, kein Versagen.
 - Typische reale Publisher-Headlines liegen bei 4–7. Ein 9er ist die Ausnahme.

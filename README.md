@@ -95,7 +95,7 @@ python skills/discover-headline/scripts/pctr.py features --titles-file titel.txt
 python skills/discover-headline/scripts/pctr.py score --input bewertung.json
 ```
 
-`features` misst Länge und Längenband, Zahlen, Ansprache, Autoritäts-, Frische- und
+`features` misst Länge (nur gezählt), Satzform (ganzer Satz oder Keyword-Stapel), Zahlen, Ansprache, Autoritäts-, Frische- und
 Superlativ-Marker, Clickbait-Lexikon, erkannte Formeln, Position der Kernentität. `score` rechnet
 die bewerteten Dimensionen in pCTR um und vergleicht gegen die Baseline.
 

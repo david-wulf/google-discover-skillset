@@ -23,8 +23,16 @@ Jede Formel hat einen psychologischen Mechanismus, der sie im Feed wirksam macht
 2. **Neugier-Lücke ohne Clickbait** — Der Leser muss wissen, worum es geht (kein Rätsel), aber noch nicht die Antwort kennen (kein Spoiler). Beispiel gut: „Von 1,5 bis 10 kWh am Tag" (Spanne ist klar, aber welche Faktoren?). Beispiel schlecht: „Du wirst nicht glauben, wie viel Strom..." (reines Clickbait).
 3. **Persönliche Relevanz** — „du", „dein", direkte Ansprache. Discover-Nutzer scrollen durch einen Feed — sie klicken nur, wenn es sie persönlich betrifft.
 4. **Konkretheit schlägt Abstraktion** — „389 Euro Ersparnis pro Jahr" ist stärker als „viel Geld sparen".
-5. **Richtwert 70–95 Zeichen** für den `og:title`. Darunter bleibt Platz für den Haken ungenutzt,
-   über 95 wird im Feed abgeschnitten. Die Kernentität gehört in die ersten 40 Zeichen.
+5. **Keine Längenvorgabe** für den `og:title` — eine Zeichenzahl-Grenze ist nicht bestätigt,
+   Titel über 65 Zeichen funktionieren im Feed problemlos. Die Kernentität gehört in die ersten
+   40 Zeichen.
+6. **Ganzer Satz statt Keyword-Stapel** — In Titeltests derselben Artikel gewann der ganze Satz
+   ausnahmslos und deutlich gegen die Keyword-Varianten (Stand: 2026-10; Details im Skill
+   `discover-headline`, `references/formeln.md`). Faustregel: ganzer Satz, zweite Person,
+   sichtbares Alltagsproblem, Ursache zurückhalten. Nicht: Keyword-Stapel, Doppelpunkt, Produkt
+   vorn. Die Doppelpunkt-Muster in der Formeltabelle oben (Zahlen-Kontrast, Experten, Trend-Hook,
+   Kosten-Hook) sind dagegen nicht getestet — Alternativen als ganzen Satz ausformulieren, etwa
+   „Stiftung Warentest hat Zahnpasta getestet, und die beste kostet nur 65 Cent".
 
 ### Headline-Validierung
 
@@ -47,8 +55,7 @@ letzten Test nicht funktionsfähig.
 ### Rote Flaggen bei Headlines:
 - Rein informativ ohne Anreiz ("Bericht über Heizkostenentwicklung 2025")
 - Clickbait ohne Substanz ("Du wirst nicht glauben, was...")
-- Zu lang (über 95 Zeichen werden im Feed abgeschnitten) oder zu kurz (unter 50 Zeichen trägt
-  kaum einen Haken)
+- Keyword-Stapel statt ganzem Satz („Kondenswasser innen Fenster Ursachen Grenzwerte")
 - Kein Bezug zu einer aktuellen Relevanz oder einem Nutzerbedürfnis
 - Identisch mit `<title>` und `<h1>` — dann wird die Chance verpasst, für Discover separat zu optimieren
 

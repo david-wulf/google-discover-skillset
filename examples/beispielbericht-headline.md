@@ -59,10 +59,10 @@ Die drei schwächsten Beiträge der Baseline: `freshness_signal`, `visual_promis
 **„Balkonkraftwerk: 1,5 bis 10 kWh am Tag – daran liegt es"** — Formel Zahlen-Kontrast, vom
 Skript in den Merkmalen als solche erkannt.
 
-Mit einer Einschränkung: 55 Zeichen liegen unter dem Richtwert von 70–95, der Titel lässt also
-Platz ungenutzt. Ausgebaut, ohne die Aussage zu verwässern:
-**„Balkonkraftwerk-Ertrag: 1,5 bis 10 kWh am Tag – an diesen drei Faktoren liegt es"** (79 Zeichen,
-im optimalen Band, plus eine Zahl mehr).
+Mit einer Einschränkung: Der Titel ist zweigeteilt statt ein ganzer Satz. Dieser Bericht entstand
+vor der Ganzer-Satz-Regel (`references/formeln.md`); nach ihr würde die Empfehlung als Satz
+ausformuliert: **„Ein Balkonkraftwerk liefert zwischen 1,5 und 10 kWh am Tag, und drei Faktoren
+entscheiden, wo du landest"**. Die Länge spielt dabei keine Rolle.
 
 **Kein Veto ausgesprochen** — der höchste pCTR-Wert und der `clickbait_score` von 1,0 fallen hier
 zusammen. Wäre der Sieger bei ≥ 6 gelandet, würde er nicht empfohlen.
@@ -86,7 +86,7 @@ Veto außerhalb der Formel.
 
 ## Methodik
 
-**Gemessen** mit `pctr.py features`: Zeichenzahl und Längenband, Zahlen, Einheiten, Jahresangaben,
+**Gemessen** mit `pctr.py features`: Zeichenzahl (nur gezählt), Zahlen, Einheiten, Jahresangaben,
 Ansprache, Versalien, Autoritäts-, Frische- und Superlativ-Marker, Clickbait-Lexikon, erkannte
 Formeln, Struktur, Position der Kernentität.
 

@@ -50,7 +50,7 @@ Das Original hätte genau diese Variante hoch bewertet.
 
 Die höchste Bewertung des Originals (92) ging an
 „Alles, was Sie über Balkonkraftwerke wissen müssen: Nutzen, Kosten und Installation" —
-83 Zeichen, im Feed abgeschnitten, ohne einen einzigen Fakt.
+Kategoriesprache ohne einen einzigen Fakt.
 
 Der Nachbau deckelt hier über K1 (Konkretheit) und K4 (stärkster Fakt): Ein Text ohne Zahlen
 kann keine Headline mit Zahlen tragen. Statt fünf Scheinlösungen liefert er den Befund:

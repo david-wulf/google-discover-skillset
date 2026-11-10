@@ -51,26 +51,34 @@ Einschränkung gehört in den Methodik-Abschnitt, wenn im Bericht darauf Bezug g
 Beim Erzeugen der fünf Varianten: nicht die Formel befüllen, sondern den stärksten Fakt
 des Textes suchen und in die passende Formel einbauen. Jede Variante nutzt eine andere Formel.
 
-| Formel | Mechanismus | Muster |
+| Formel | Mechanismus | Muster (Satzform) |
 |--------|-------------|--------|
-| **Zahlen-Kontrast** | Überraschung durch unerwartete Spanne | „Von [niedrig] bis [hoch]: [was den Unterschied macht]" |
+| **Zahlen-Kontrast** | Überraschung durch unerwartete Spanne | „[Gegenstand] schwankt zwischen [niedrig] und [hoch], und [was den Unterschied macht]" |
 | **Konkretes Ergebnis** | Prüfbarkeit erzeugt Vertrauen | „[Ergebnis mit Zahl] — [unter welcher Bedingung]" |
 | **How-to plus Hindernis** | Nutzen und entkräftete Angst | „Wie [Zielgruppe] [Ergebnis] erreicht — ohne [Hindernis]" |
 | **Konträrer Ansatz** | Widerspruch zur Erwartung | „Warum [verbreitete Annahme] nicht stimmt — und was [Autorität] empfiehlt" |
-| **Autorität plus Überraschung** | Fremdautorität als Bürge | „Laut [Institution]: [überraschende Erkenntnis]" |
-| **Entscheidungshilfe** | Direkte Betroffenheit | „[Option A] oder [Option B]? [Kriterium, das entscheidet]" |
-| **Trend-Hook** | Aktualität und persönliche Folge | „[Aktuelles Thema] [Jahr]: was das für [Zielgruppe] bedeutet" |
-| **Kosten-Hook** | Geld ist der universelle Trigger | „[Thema]: so viel [sparst/kostest] du wirklich — [Zeitraum]" |
+| **Autorität plus Überraschung** | Fremdautorität als Bürge | „[Experten/Institution] sagen es seit Jahren, und trotzdem [verbreiteter Fehler]" |
+| **Entscheidungshilfe** | Direkte Betroffenheit | „[Option A] oder [Option B]? [Kriterium] entscheidet" |
+| **Trend-Hook** | Aktualität und persönliche Folge | „Was [Änderung] ab [Zeitpunkt] für [Zielgruppe] bedeutet" |
+| **Kosten-Hook** | Geld ist der universelle Trigger | „So viel [sparst/kostet] dich [Thema] wirklich — [Zeitraum]" |
+
+Ältere Muster mit Doppelpunkt („Laut [Institution]: …", „Von X bis Y: …") sind gegen die
+Ganzer-Satz-Regel (Prinzip 6) nicht getestet und werden nicht mehr als Standard vorgeschlagen.
 
 ### Prinzipien
 
 1. Der stärkste Fakt gehört in die Headline, nicht in Absatz 4.
 2. Neugier-Lücke: Der Leser weiß, worum es geht, aber nicht die Antwort. Weder Rätsel noch Spoiler.
 3. Konkret schlägt abstrakt. „389 Euro im Jahr" schlägt „viel Geld".
-4. **70–95 Zeichen** für den `og:title`. Darunter bleibt Platz für den Haken ungenutzt, darüber
-   wird im Feed abgeschnitten. Bewertet wird der `og:title`, nicht die H1 — eine Titeländerung nur
+4. **Keine Längenvorgabe** für den `og:title`: Eine Zeichenzahl-Grenze ist nicht bestätigt, Titel
+   über 65 Zeichen funktionieren im Feed problemlos. Bewertet wird der `og:title`, nicht die H1 — eine Titeländerung nur
    an der H1 kommt im Feed nicht an.
 5. Die Kernentität steht in den ersten 40 Zeichen, nicht am Ende.
+6. **Ganzer Satz statt Keyword-Stapel.** In Titeltests derselben Artikel gewann der ganze Satz
+   ausnahmslos und deutlich gegen die Keyword-Varianten (Stand: 2026-10; Beispielpaare und
+   Grenzen der Messung im Skill `discover-headline`, `references/formeln.md`). Faustregel: ganzer
+   Satz, zweite Person, sichtbares Alltagsproblem, Ursache zurückhalten. Nicht: Keyword-Stapel,
+   Doppelpunkt, Produkt vorn.
 
 Eine vollständige Bewertung der Headline über acht gewichtete Dimensionen samt Clickbait-Abzug
 leistet der Skill `discover-headline`. Ist er verfügbar, wird die Headline dort bewertet und das

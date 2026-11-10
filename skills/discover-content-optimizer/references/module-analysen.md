@@ -13,7 +13,7 @@ Diese Werte sind berechnet. Sie werden zitiert, nicht geschätzt.
 | `document.avg_paragraph_words` | Ø Absatzlänge | 35–70 gut. `paragraphs_over_120w` > 0 = Mobil-Problem |
 | `document.subheadings_detected` | erkannte Zwischenüberschriften | < 1 pro 250 Wörter = Abzug |
 | `readability.score` / `.band` | Flesch (EN) bzw. Flesch-Amstad (DE) | DE-Zielband 50–70. Unter 40 = zu schwer für einen Feed-Kanal |
-| `headline.characters` | Headline-Länge | > 65 Zeichen wird im Feed abgeschnitten |
+| `headline.characters` | Headline-Länge | nur gezählt, nicht bewertet — eine Längengrenze ist nicht bestätigt |
 | `lead.answer_first_hint` | Erster Satz kurz **und** enthält Zahl/Aussageverb | `false` = Lead liefert die Antwort nicht sofort |
 | `fact_density.specific_facts_per_100_words` | Prozent-, Währungs-, Datums-, Einheitenangaben je 100 Wörter | < 1,0 = vage. 2–6 = faktendicht |
 | `topical_core_terms` | häufig **und** über viele Absätze verteilt | Das ist die thematische Klammer — als was Google den Text klassifiziert |
@@ -151,7 +151,7 @@ Skript gemessene Zeichenzahl.
 Genau 5 Varianten. Jede nutzt eine **andere** Formel (Formelkatalog in
 `references/discover-mechanik.md`). Pro Variante:
 
-- Die Headline (≤ 65 Zeichen, gezählt — nicht geschätzt)
+- Die Headline als ganzer Satz (keine Längengrenze; über 65 Zeichen ist kein Problem)
 - Formel
 - Rubrik-Score mit derselben Rubrik wie das Original
 - Ein Satz: welcher Fakt aus dem Text sie trägt

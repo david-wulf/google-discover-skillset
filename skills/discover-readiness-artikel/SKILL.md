@@ -180,8 +180,8 @@ Die Headline ist der wichtigste CTR-Hebel im Discover-Feed. Analysiere sie grün
 
 - Wie lautet der aktuelle `og:title`? Unterscheidet er sich von `<title>` und `<h1>`? (Falls alle drei identisch sind: verpasste Chance — der og:title kann und sollte für Discover separat optimiert werden, ohne die SEO-Rankings zu gefährden)
 - CTR-Potenzial bewerten: Klarheit, emotionale Ansprache, Neugier-Balance, Spezifität
-- Länge: Richtwert **70–95 Zeichen** für den `og:title`. Darunter bleibt Platz für den Haken
-  ungenutzt, über 95 wird im Feed abgeschnitten. Kernentität in die ersten 40 Zeichen
+- Form: **ganzer Satz** statt Keyword-Stapel; keine Längenvorgabe (nicht bestätigt, über 65
+  Zeichen funktioniert problemlos). Kernentität in die ersten 40 Zeichen
 - Folgt die Headline einer bewährten Discover-Formel? (How-to, Nummerierte Liste, Konträrer Ansatz, Trend-Hook, Experten-Zitat — Details in `references/discover-kriterien.md`)
 
 **Headline-Bewertung abgeben:** Der Skill `discover-headline` bewertet den `og:title` über acht

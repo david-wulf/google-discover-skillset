@@ -9,7 +9,7 @@ unterscheiden:
 |------|---------|---------------|
 | `<title>` | Google-Suche | Keyword, Klarheit, Ranking |
 | `<h1>` | die Seite selbst | Leseführung im Artikel |
-| **`og:title`** | **Discover-Feed** | Emotion plus Versprechen, ~70–95 Zeichen |
+| **`og:title`** | **Discover-Feed** | Emotion plus Versprechen, als ganzer Satz |
 
 Eine Titeländerung nur an der H1 kommt im Feed **nicht** an. Das ist der häufigste stille Fehler:
 Redaktionen ändern die Überschrift und wundern sich, dass die Karte gleich bleibt.
@@ -22,38 +22,67 @@ Anzeigetext. Deshalb lohnt der Vortest hier mehr als an jeder anderen Stelle.
 
 ## Länge
 
-Richtwert **70–95 Zeichen**. Darunter bleibt Platz für den Haken ungenutzt, darüber wird im Feed
-abgeschnitten. Praktische Bänder:
+Eine Zeichenzahl-Vorgabe für den `og:title` ist **nicht bestätigt**. Titel mit deutlich mehr als
+65 Zeichen funktionieren im Feed problemlos. `pctr.py` zählt die Zeichen, bewertet sie aber nicht;
+ein Titel wird nicht wegen seiner Länge abgewertet oder gekürzt.
 
-| Zeichen | Bewertung |
-|---------|-----------|
-| 70–95 | optimal |
-| 50–69 | kurz — der Titel könnte mehr tragen |
-| 96–110 | lang — Abschneiden möglich |
-| < 50 oder > 110 | außerhalb |
-
-Die Kernentität gehört in die **ersten 40 Zeichen**, weil dort auf jedem Gerät gelesen wird.
+Die Kernentität gehört trotzdem nach vorn, in die **ersten 40 Zeichen**: Dort liest jeder, auch
+wer nur anscrollt.
 
 ## Die Formeln
 
 Nicht die Formel befüllen, sondern den stärksten Fakt des Artikels suchen und in die passende
 Formel einbauen. Bei fünf Varianten: fünf verschiedene Formeln, sonst testet man dieselbe Idee
-fünfmal.
+fünfmal. **Jede Formel wird als ganzer Satz ausformuliert** (siehe nächster Abschnitt) — die
+Formel bestimmt den Aufhänger, nicht die Satzform.
 
-| Formel | Muster | Wirkt über |
+| Formel | Muster (Satzform) | Wirkt über |
 |--------|--------|-----------|
 | **How-to** | „Wie [Zielgruppe] [Ergebnis] erreicht — ohne [Hindernis]" | Nutzen plus entkräftete Angst |
-| **Nummerierte Liste** | „[Zahl] [Adjektiv] Wege zu [Nutzen]" | Abschätzbarer Aufwand |
+| **Nummerierte Liste** | „[Zahl] [Dinge], die [Zielgruppe] [Ergebnis] bringen" | Abschätzbarer Aufwand |
 | **Konträrer Ansatz** | „Warum [verbreitete Annahme] falsch ist — und was stattdessen gilt" | Widerspruch zur Erwartung |
-| **Trend-Hook** | „[Änderung/Jahr]: was das für [Zielgruppe] bedeutet" | Aktualität plus Betroffenheit |
-| **Experten-Zitat** | „Laut [Institution]: [überraschende Erkenntnis]" | Fremdautorität als Bürge |
-| **Zahlen-Kontrast** | „Von [niedrig] bis [hoch]: [was den Unterschied macht]" | Überraschung durch Spanne |
+| **Trend-Hook** | „Was [Änderung] ab [Zeitpunkt] für [Zielgruppe] bedeutet" | Aktualität plus Betroffenheit |
+| **Experten-Zitat** | „[Experten/Institution] sagen es seit Jahren, und trotzdem [verbreiteter Fehler]" | Fremdautorität als Bürge |
+| **Zahlen-Kontrast** | „[Gegenstand] schwankt zwischen [niedrig] und [hoch], und [was den Unterschied macht]" | Überraschung durch Spanne |
 | **Konkretes Ergebnis** | „[Ergebnis mit Zahl] — [unter welcher Bedingung]" | Prüfbarkeit erzeugt Vertrauen |
-| **Entscheidungshilfe** | „[Option A] oder [Option B]? [Das Kriterium]" | Direkte Betroffenheit |
-| **Kosten-Hook** | „[Thema]: so viel [sparst/kostet] du wirklich — [Zeitraum]" | Geld ist universell |
+| **Entscheidungshilfe** | „[Option A] oder [Option B]? [Das Kriterium] entscheidet" | Direkte Betroffenheit |
+| **Kosten-Hook** | „So viel [sparst/kostet] dich [Thema] wirklich — [Zeitraum]" | Geld ist universell |
+
+Die ersten fünf sind die Kernformeln des Playbooks, die übrigen vier Ergänzungen. Ältere Muster
+mit Doppelpunkt („Laut [Institution]: …", „[Thema] 2026: was das für … bedeutet", „Von X bis Y:
+…") sind **gegen die Ganzer-Satz-Regel nicht getestet** und werden nicht mehr als Standard
+vorgeschlagen. Wer sie trotzdem verwendet, kennzeichnet die Variante als ungetestet.
 
 Zwei Formeln haben einen Zulieferer im Prozess: der **Trend-Hook** kommt aus Trends-Daten, das
 **Experten-Zitat** aus den Personen, die bei der Entitäten-Recherche ohnehin auffallen.
+
+## Ganzer Satz statt Keyword-Stapel
+
+Läuft derselbe Artikel mit beiden Titelformen im Feed, gewinnt der **ganze Satz** — in den
+Titeltests derselben Artikel ausnahmslos und mit deutlichem Abstand (Stand: 2026-10). Beispiele
+der getesteten Paare:
+
+| Thema | Ganzer Satz (gewann) | Keyword-Titel |
+|-------|-------------|---------------|
+| Fenster putzen | „Fensterputzer sagen es seit Jahren, und trotzdem macht es fast jeder falsch" | „Fenster putzen ohne Streifen 4 Fehler" · „Schlieren Fenster Sonne Reiniger Zeitung" |
+| Kondenswasser | „Beschlagene Fensterscheiben am Morgen sind ein Warnsignal" | „Kondenswasser innen Fenster Ursachen Grenzwerte" |
+| Fugen im Bad | „Die Fugen im Bad vergrauen schneller, wenn du diesen Fehler machst" | „Essig Bad Zementfugen Schäden grau" · „Schimmel Fugen Silikon erneuern wann" |
+| Standby | „Diese 7 Geräte ziehen Strom, obwohl ausgeschaltet" | „Stromfresser Ruhemodus 7 Geräte Tipps" |
+
+**Faustregel:** ganzer Satz, zweite Person, ein sichtbares Alltagsproblem, die Ursache
+zurückhalten. **Nicht:** Keyword-Stapel, Doppelpunkt, Produkt vorn. Discover ist ein Feed, keine
+Suche — die Keyword-Form verliert dort ihren Vorteil.
+
+„Die Ursache zurückhalten" ist keine Clickbait-Lizenz: Der Gegenstand steht im Titel (Fugen,
+Fensterscheiben, Geräte), nur die Erklärung kommt im Artikel. Verschwiegen wird die Antwort,
+nie das Thema — siehe Clickbait-Grenze unten.
+
+**Grenzen der Messung:** vier Themen, alle Haushalts-Ratgeber. Für News mit harter
+Tagesaktualität ist die Regel nicht belegt.
+
+`pctr.py features` misst die Satzform heuristisch (`structure.sentence_form`: `satz`,
+`keyword_stapel` oder `unklar`, nur für Deutsch). Das Feld ist ein Hinweis für die Bewertung von
+`title_formatting`, kein Urteil.
 
 ## Suchtitel gegen Discover-Titel
 
@@ -63,8 +92,8 @@ Feed hat er keine — der Titel muss sie erzeugen.
 - Suchtitel: „Die schönsten Wanderwege im Schwarzwald"
 - Discover-Titel: „Ich habe 10 versteckte Schwarzwald-Pfade gefunden, die Touristen nicht kennen"
 
-Die Zutaten der zweiten Variante: Ich-Perspektive, konkrete Zahl, benannte Zielgruppe, angesprochener
-Wunsch. Alle vier fehlen der ersten.
+Die Zutaten der zweiten Variante: ganzer Satz, Ich-Perspektive, konkrete Zahl, benannte
+Zielgruppe, angesprochener Wunsch. Alle fünf fehlen der ersten.
 
 ## Die Clickbait-Grenze
 

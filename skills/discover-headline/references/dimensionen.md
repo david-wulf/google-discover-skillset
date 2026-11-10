@@ -86,12 +86,23 @@ Reiz: gemessen wird an Station 05 die Klickqualität, nicht die Klickmenge.
 
 ## title_formatting (8 %)
 
-- **10** — 70–95 Zeichen, klare Zweiteilung (Doppelpunkt oder Gedankenstrich), Kernentität in
-  den ersten 40 Zeichen, keine Versalien, kein Ausrufezeichen
-- **7** — Länge im Rahmen 50–110, saubere Struktur
-- **5** — zu kurz (unter 50) und damit ungenutzter Platz, oder leicht über 95
-- **3** — über 110 Zeichen, Abschneiden im Feed
+- **10** — ganzer Satz (mit Verb, kein Doppelpunkt), Kernentität in den ersten 40 Zeichen,
+  keine Versalien, kein Ausrufezeichen
+- **7** — ganzer Satz, aber Kernentität erst hinten; oder Satz mit Doppelpunkt- bzw.
+  Gedankenstrich-Zweiteilung
+- **5** — Doppelpunkt-Titel, dessen zweite Hälfte nur ein Schlagwort ist
+- **3** — Keyword-Stapel (aneinandergereihte Substantive ohne Satz)
 - **0** — Versalien-Wörter, mehrere Ausrufezeichen, oder unleserliche Struktur
+
+Die Länge geht **nicht** in die Bewertung ein: Eine Zeichenzahl-Vorgabe ist nicht bestätigt, und
+Titel über 65 Zeichen funktionieren im Feed problemlos.
+
+Warum der ganze Satz die Bestnote trägt: In Titeltests derselben Artikel gewann der ganze Satz
+ausnahmslos und deutlich gegen die Keyword-Varianten (Details in `formeln.md`, Abschnitt
+„Ganzer Satz statt Keyword-Stapel"). Die Dimension wiegt im Modell nur 8 % — das Modell bildet
+diesen Befund also schwächer ab, als er in den Tests ausfiel. Deshalb gehört ein Keyword-Stapel im
+Bericht zusätzlich als eigener Befund in das Urteil, nicht nur in den Score.
+`structure.sentence_form` aus `pctr.py features` ist der Messhinweis dafür.
 
 Werte aus `pctr.py features` übernehmen, nicht schätzen.
 
